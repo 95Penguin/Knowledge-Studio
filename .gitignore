@@ -1,0 +1,31 @@
+.idea/
+.vscode/
+.DS_Store
+.env
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Java
+backend/target/
+backend/data/
+ai-service/data/
+
+# Local data and indexes
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/raw/README.md
+!data/raw/redis-docs/
+data/raw/redis-docs/*
+!data/raw/redis-docs/.gitkeep
+!data/raw/redis-docs/CORPUS_MANIFEST.yaml.example
+!data/processed/.gitkeep
+
+# External source cache
+.cache/

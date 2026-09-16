@@ -1,0 +1,11 @@
+# Case-insensitive path patterns applied after the allowlist.
+# These rules are deliberately conservative; rejected files are reported.
+
+/cloud/
+/operate/rs/
+/operate/kubernetes/
+/redis-enterprise/
+/redis-software/
+/redis-cloud/
+/vector-database/
+/ai/

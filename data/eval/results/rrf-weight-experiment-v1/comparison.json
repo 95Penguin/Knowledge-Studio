@@ -1,0 +1,62 @@
+{
+  "questions": "/Users/95penguin/project/项目/support-pilot/data/eval/questions.v1.jsonl",
+  "top_k": 5,
+  "retrievers": [
+    {
+      "retriever": "dense-cosine",
+      "recall_at_1": 0.377778,
+      "recall_at_3": 0.555556,
+      "recall_at_5": 0.622222,
+      "mrr": 0.468889,
+      "hit_count": 28,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 43.683,
+        "p50": 21.459,
+        "p95": 25.101
+      }
+    },
+    {
+      "retriever": "weighted-rrf-dense-2-bm25-1",
+      "recall_at_1": 0.133333,
+      "recall_at_3": 0.355556,
+      "recall_at_5": 0.488889,
+      "mrr": 0.264444,
+      "hit_count": 22,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 21.481,
+        "p50": 20.365,
+        "p95": 25.771
+      }
+    },
+    {
+      "retriever": "weighted-rrf-dense-4-bm25-1",
+      "recall_at_1": 0.222222,
+      "recall_at_3": 0.444444,
+      "recall_at_5": 0.488889,
+      "mrr": 0.327407,
+      "hit_count": 22,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 20.191,
+        "p50": 19.754,
+        "p95": 22.885
+      }
+    },
+    {
+      "retriever": "weighted-rrf-dense-8-bm25-1",
+      "recall_at_1": 0.288889,
+      "recall_at_3": 0.488889,
+      "recall_at_5": 0.555556,
+      "mrr": 0.383704,
+      "hit_count": 25,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 20.475,
+        "p50": 19.943,
+        "p95": 23.115
+      }
+    }
+  ]
+}

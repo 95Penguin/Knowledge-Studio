@@ -1,0 +1,4456 @@
+{
+  "retriever": "okapi-bm25",
+  "parameters": {
+    "k1": 1.5,
+    "b": 0.75,
+    "top_k": 5
+  },
+  "questions_total": 50,
+  "questions_evaluated_for_recall": 45,
+  "questions_excluded_from_recall": 5,
+  "recall_at_1": 0.044444,
+  "recall_at_3": 0.066667,
+  "recall_at_5": 0.066667,
+  "mrr": 0.051852,
+  "hit_count": 3,
+  "latency_ms": {
+    "average": 0.035,
+    "p50": 0.029,
+    "p95": 0.068
+  },
+  "recall_by_category": {
+    "cache_consistency": 1.0,
+    "cache_failure": 1.0,
+    "cluster": 0.0,
+    "configuration": 0.0,
+    "latency": 0.0,
+    "memory": 0.0,
+    "persistence": 0.0,
+    "replication": 0.0,
+    "security": 0.0,
+    "sentinel": 0.2
+  },
+  "details": [
+    {
+      "id": "redis-001",
+      "category": "latency",
+      "question": "如何开启 Redis 延迟监控，并把需要记录的延迟阈值设置为 100 毫秒？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "section_path": [
+            "How to enable latency monitoring"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.063,
+      "results": [
+        {
+          "rank": 1,
+          "score": 53.325222,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 2,
+          "score": 29.910428,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 28.142075,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 4,
+          "score": 22.601636,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 22.342873,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "redis-002",
+      "category": "latency",
+      "question": "Redis 出现延迟尖峰时，哪个命令可以给出人类可读的诊断和处理建议？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/latency-doctor.md",
+          "section_path": [
+            "LATENCY DOCTOR"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.031,
+      "results": [
+        {
+          "rank": 1,
+          "score": 52.36716,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 47.050989,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 43.539155,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 4,
+          "score": 42.424076,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 36.645563,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "redis-003",
+      "category": "latency",
+      "question": "SLOWLOG GET 记录的执行时间是否包含与客户端通信和发送响应的时间？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/slowlog-get.md",
+          "section_path": [
+            "SLOWLOG GET"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.043,
+      "results": [
+        {
+          "rank": 1,
+          "score": 59.872178,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 59.061267,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 58.065244,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 4,
+          "score": 55.176747,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 5,
+          "score": 51.527071,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-004",
+      "category": "latency",
+      "question": "Redis 延迟突然升高时，官方排查清单建议优先检查哪些常见原因？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "section_path": [
+            "Diagnosing latency issues"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.018,
+      "results": [
+        {
+          "rank": 1,
+          "score": 49.882875,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 2,
+          "score": 40.773205,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 30.350478,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 4,
+          "score": 27.558981,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 21.887852,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "redis-005",
+      "category": "memory",
+      "question": "如何查看一个 Redis key 及其 value 实际占用了多少内存？复杂数据结构如何提高估算精度？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-usage.md",
+          "section_path": [
+            "MEMORY USAGE"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.053,
+      "results": [
+        {
+          "rank": 1,
+          "score": 60.074855,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 57.300719,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 56.94543,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 52.418423,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 5,
+          "score": 52.368749,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-006",
+      "category": "memory",
+      "question": "哪个 Redis 命令可以分析实例正在经历的内存问题并给出建议？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-doctor.md",
+          "section_path": [
+            "MEMORY DOCTOR"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.02,
+      "results": [
+        {
+          "rank": 1,
+          "score": 55.115141,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 2,
+          "score": 49.581737,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 44.043424,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 43.612314,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 5,
+          "score": 35.745655,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-007",
+      "category": "memory",
+      "question": "大量小对象分别存成多个 key 时，Redis 官方文档建议如何利用 hash 节省内存？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "section_path": [
+            "Use hashes when possible"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.042,
+      "results": [
+        {
+          "rank": 1,
+          "score": 58.540911,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 2,
+          "score": 51.809849,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 46.501813,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 42.762046,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 42.350745,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-008",
+      "category": "persistence",
+      "question": "appendfsync everysec 在性能和数据安全之间有什么权衡，故障时最多可能损失多少数据？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.022,
+      "results": [
+        {
+          "rank": 1,
+          "score": 72.599887,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 2,
+          "score": 71.596391,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 3,
+          "score": 71.00717,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 4,
+          "score": 63.092552,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 50.072127,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "redis-009",
+      "category": "persistence",
+      "question": "Redis 的 RDB 和 AOF 分别以什么方式保存数据？是否可以同时使用？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Redis persistence"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.034,
+      "results": [
+        {
+          "rank": 1,
+          "score": 79.1719,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 2,
+          "score": 70.006726,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 64.432411,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 4,
+          "score": 64.372543,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 5,
+          "score": 58.672934,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "redis-010",
+      "category": "persistence",
+      "question": "Redis 重启时发现 AOF 尾部被截断，默认会怎样处理，旧版本可以用什么工具修复？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "What should I do if my AOF gets truncated?"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.026,
+      "results": [
+        {
+          "rank": 1,
+          "score": 47.352088,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 2,
+          "score": 43.746828,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 31.819285,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 4,
+          "score": 27.739623,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 5,
+          "score": 23.698677,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-011",
+      "category": "replication",
+      "question": "Redis 主从复制是同步还是异步的？主节点在副本同步期间还能处理请求吗？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Important facts about Redis replication"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.02,
+      "results": [
+        {
+          "rank": 1,
+          "score": 59.248185,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 2,
+          "score": 57.975819,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 53.264139,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 4,
+          "score": 53.226195,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 5,
+          "score": 48.49794,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-012",
+      "category": "replication",
+      "question": "如何把一个 Redis replica 提升为 master，同时保留已经复制的数据？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/replicaof.md",
+          "section_path": [
+            "REPLICAOF"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.068,
+      "results": [
+        {
+          "rank": 1,
+          "score": 50.73459,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 49.923063,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 44.058395,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 32.536842,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 5,
+          "score": 31.525166,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "redis-013",
+      "category": "replication",
+      "question": "为什么关闭持久化的 Redis master 不应该在崩溃后自动重启？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.052,
+      "results": [
+        {
+          "rank": 1,
+          "score": 38.967863,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 2,
+          "score": 37.916024,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 35.765088,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 31.771938,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 5,
+          "score": 30.068373,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        }
+      ]
+    },
+    {
+      "id": "redis-014",
+      "category": "sentinel",
+      "question": "Redis Sentinel 的 quorum 与执行 failover 所需的多数派授权有什么区别？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.046,
+      "results": [
+        {
+          "rank": 1,
+          "score": 36.93626,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 33.720084,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 33.667306,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 27.381996,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 26.160001,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        }
+      ]
+    },
+    {
+      "id": "redis-015",
+      "category": "sentinel",
+      "question": "Sentinel 中 SDOWN 和 ODOWN 分别表示什么？ODOWN 是否适用于 replica？",
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "first_relevant_rank": 1,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "latency_ms": 0.06,
+      "results": [
+        {
+          "rank": 1,
+          "score": 28.877783,
+          "chunk_id": "f3d2d6a69d77cce92b76",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "source_type": "official",
+          "content": "Redis Sentinel has two different concepts of *being down*, one is called\na *Subjectively Down* condition (SDOWN) and is a down condition that is\nlocal to a given Sentinel instance. Another is called *Objectively Down*\ncondition (ODOWN) and is reached when enough Sentinels (at least the\nnumber configured as the `quorum` parameter of the monitored master) have\nan SDOWN condition, and get feedback from other Sentinels using\nthe `SENTINEL is-master-down-by-addr` command.\n\nFrom the point of view of a Sentinel an SDOWN condition is reached when it\ndoes not receive a valid reply to PING requests for the number of seconds\nspecified in the configuration as `is-master-down-after-milliseconds`\nparameter.\n\nAn acceptable reply to PING is one of the following:\n\n* PING replied with +PONG.\n* PING replied with -LOADING error.\n* PING replied with -MASTERDOWN error.\n\nAny other reply (or no reply at all) is considered non valid.\nHowever note that **a logical master that advertises itself as a replica in\nthe INFO output is considered to be down**.\n\nNote that SDOWN requires that no acceptable reply is received for the whole\ninterval configured, so for instance if the interval is 30000 milliseconds\n(30 seconds) and we receive an acceptable ping reply every 29 seconds, the\ninstance is considered to be working.\n\nSDOWN is not enough to trigger a failover: it only means a single Sentinel\nbelieves a Redis instance is not available. To trigger a failover, the\nODOWN state must be reached.\n\nTo switch from SDOWN to ODOWN no strong consensus algorithm is used, but\njust a form of gossip: if a given Sentinel gets reports that a master\nis not working from enough Sentinels **in a given time range**, the SDOWN is\npromoted to ODOWN. If this acknowledge is later missing, the flag is cleared.\n\nA more strict authorization that uses an actual majority is required in\norder to really start the failover, but no failover can be triggered without\nreaching the ODOWN state.\n\nThe ODOWN condition **only applies to masters**. For other kind of instances\nSentinel doesn't require to act, so the ODOWN state is never reached for replicas\nand other sentinels, but only SDOWN is."
+        },
+        {
+          "rank": 2,
+          "score": 26.730312,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 3,
+          "score": 24.85096,
+          "chunk_id": "ad2a56afe4720fe89543",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "source_type": "official",
+          "content": "The ODOWN condition **only applies to masters**. For other kind of instances\nSentinel doesn't require to act, so the ODOWN state is never reached for replicas\nand other sentinels, but only SDOWN is.\n\nHowever SDOWN has also semantic implications. For example a replica in SDOWN\nstate is not selected to be promoted by a Sentinel performing a failover.\n\nSentinels and replicas auto discovery\n---\n\nSentinels stay connected with other Sentinels in order to reciprocally\ncheck the availability of each other, and to exchange messages. However you\ndon't need to configure a list of other Sentinel addresses in every Sentinel\ninstance you run, as Sentinel uses the Redis instances Pub/Sub capabilities\nin order to discover the other Sentinels that are monitoring the same masters\nand replicas.\n\nThis feature is implemented by sending *hello messages* into the channel named\n`__sentinel__:hello`.\n\nSimilarly you don't need to configure what is the list of the replicas attached\nto a master, as Sentinel will auto discover this list querying Redis.\n\n* Every Sentinel publishes a message to every monitored master and replica Pub/Sub channel `__sentinel__:hello`, every two seconds, announcing its presence with ip, port, runid.\n* Every Sentinel is subscribed to the Pub/Sub channel `__sentinel__:hello` of every master and replica, looking for unknown sentinels. When new sentinels are detected, they are added as sentinels of this master.\n* Hello messages also include the full current configuration of the master. If the receiving Sentinel has a configuration for a given master which is older than the one received, it updates to the new configuration immediately.\n* Before adding a new sentinel to a master a Sentinel always checks if there is already a sentinel with the same runid or the same address (ip and port pair). In that case all the matching sentinels are removed, and the new added.\n\nSentinel reconfiguration of instances outside the failover procedure\n---\n\nEven when no failover is in progress, Sentinels will always try to set the\ncurrent configuration on monitored instances. Specifically:\n\n* Replicas (according to the current configuration) that claim to be masters, will be configured as replicas to replicate with the current master.\n* Replicas connected to a wrong master, will be reconfigured to replicate with the right master."
+        },
+        {
+          "rank": 4,
+          "score": 23.474864,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 5,
+          "score": 22.695785,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "source_type": "official",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        }
+      ]
+    },
+    {
+      "id": "redis-016",
+      "category": "cluster",
+      "question": "Redis Cluster 客户端收到 MOVED 错误后应如何处理，是否应该更新本地槽位映射？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.048,
+      "results": [
+        {
+          "rank": 1,
+          "score": 47.161807,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 33.632022,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 3,
+          "score": 28.716838,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 26.084809,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 23.839277,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "redis-017",
+      "category": "cluster",
+      "question": "Redis Cluster 为什么可能丢失已经向客户端确认的写入？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "section_path": [
+            "Redis Cluster 101",
+            "Redis Cluster consistency guarantees"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.042,
+      "results": [
+        {
+          "rank": 1,
+          "score": 29.05062,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 22.642243,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 3,
+          "score": 20.112349,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 4,
+          "score": 19.87998,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 19.437883,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        }
+      ]
+    },
+    {
+      "id": "redis-018",
+      "category": "security",
+      "question": "Redis 使用默认配置、未设置密码并监听所有接口时，protected mode 会怎样限制连接？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "section_path": [
+            "Protected mode"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.026,
+      "results": [
+        {
+          "rank": 1,
+          "score": 47.48923,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 2,
+          "score": 38.379045,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 35.748552,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 29.443167,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 29.249289,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "redis-019",
+      "category": "security",
+      "question": "如何查看最近因为认证失败、命令、key 或 Pub/Sub channel 权限而被拒绝的 ACL 事件？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/acl-log.md",
+          "section_path": [
+            "ACL LOG"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.049,
+      "results": [
+        {
+          "rank": 1,
+          "score": 44.135836,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 33.337758,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 32.76623,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 4,
+          "score": 27.688222,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 27.601815,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        }
+      ]
+    },
+    {
+      "id": "redis-020",
+      "category": "out_of_scope",
+      "question": "请根据当前知识库说明 PostgreSQL VACUUM 的 autovacuum_vacuum_scale_factor 应该设置为多少。",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 0.016,
+      "results": [
+        {
+          "rank": 1,
+          "score": 41.3443,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 2,
+          "score": 36.526403,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 31.506777,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 29.868683,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 5,
+          "score": 23.434561,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "practice-001",
+      "category": "cache_failure",
+      "question": "缓存雪崩、缓存击穿和缓存穿透分别是什么？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "first_relevant_rank": 3,
+      "expected_sources": [
+        {
+          "source_path": "engineering/cache-failure-patterns.md",
+          "section_path": [
+            "概念边界"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "engineering/cache-failure-patterns.md",
+          "section_path": [
+            "概念边界"
+          ]
+        }
+      ],
+      "latency_ms": 0.016,
+      "results": [
+        {
+          "rank": 1,
+          "score": 101.907362,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 2,
+          "score": 100.352527,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 3,
+          "score": 96.413715,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 4,
+          "score": 95.844775,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 95.662287,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        }
+      ]
+    },
+    {
+      "id": "practice-002",
+      "category": "cache_consistency",
+      "question": "Cache-Aside 更新数据时为什么通常先更新数据库再删除缓存？",
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "first_relevant_rank": 1,
+      "expected_sources": [
+        {
+          "source_path": "engineering/cache-aside-consistency.md",
+          "section_path": [
+            "写路径与失效"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "engineering/cache-aside-consistency.md",
+          "section_path": [
+            "写路径与失效"
+          ]
+        }
+      ],
+      "latency_ms": 0.018,
+      "results": [
+        {
+          "rank": 1,
+          "score": 119.634839,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 64.958549,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 61.348911,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 60.704408,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 5,
+          "score": 53.242361,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-021",
+      "category": "latency",
+      "question": "LATENCY LATEST 会为每个延迟事件返回哪些字段？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/latency-latest.md",
+          "section_path": [
+            "LATENCY LATEST"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.026,
+      "results": [
+        {
+          "rank": 1,
+          "score": 19.723397,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 2,
+          "score": 19.05417,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 18.561565,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 14.56485,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 14.34674,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "redis-022",
+      "category": "latency",
+      "question": "如何查询 Redis 慢日志当前保存了多少条记录？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/slowlog-len.md",
+          "section_path": [
+            "SLOWLOG LEN"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.012,
+      "results": [
+        {
+          "rank": 1,
+          "score": 28.941403,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 2,
+          "score": 26.954668,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 17.578453,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 4,
+          "score": 15.852395,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 15.726264,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        }
+      ]
+    },
+    {
+      "id": "redis-023",
+      "category": "memory",
+      "question": "MEMORY STATS 用来查看什么，它返回哪一类信息？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-stats.md",
+          "section_path": [
+            "MEMORY STATS"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.029,
+      "results": [
+        {
+          "rank": 1,
+          "score": 32.853446,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 2,
+          "score": 27.290518,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 24.278669,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 22.626911,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 5,
+          "score": 20.764719,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-024",
+      "category": "memory",
+      "question": "Redis 为什么会对较小的 Hash、List、Set 和 Sorted Set 使用特殊紧凑编码？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "section_path": [
+            "Special encoding of small aggregate data types"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.104,
+      "results": [
+        {
+          "rank": 1,
+          "score": 29.64543,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 2,
+          "score": 29.021458,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 27.051959,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 4,
+          "score": 25.644574,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 24.444994,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "redis-025",
+      "category": "persistence",
+      "question": "AOF 文件为什么需要重写，重写期间 Redis 是否仍能继续处理命令？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "Log rewriting"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.026,
+      "results": [
+        {
+          "rank": 1,
+          "score": 62.177512,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 36.254697,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 31.184982,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 4,
+          "score": 28.496439,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 5,
+          "score": 27.053924,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "redis-026",
+      "category": "persistence",
+      "question": "RDB 持久化在备份、灾难恢复和重启速度方面有什么优势？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "RDB advantages"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.023,
+      "results": [
+        {
+          "rank": 1,
+          "score": 38.510808,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 25.879881,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 24.354514,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 4,
+          "score": 22.113646,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 17.611068,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "redis-027",
+      "category": "persistence",
+      "question": "与 RDB 相比，AOF 持久化主要有哪些性能或文件体积代价？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "AOF disadvantages"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.027,
+      "results": [
+        {
+          "rank": 1,
+          "score": 46.197117,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 39.21661,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 34.710432,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 4,
+          "score": 25.915045,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 5,
+          "score": 22.795065,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        }
+      ]
+    },
+    {
+      "id": "redis-028",
+      "category": "persistence",
+      "question": "备份 Redis RDB 文件时是否必须停止 Redis，官方建议怎样复制快照？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Backing up Redis data"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.021,
+      "results": [
+        {
+          "rank": 1,
+          "score": 48.052879,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 21.375345,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 20.273618,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 4,
+          "score": 14.664462,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 14.424843,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        }
+      ]
+    },
+    {
+      "id": "redis-029",
+      "category": "replication",
+      "question": "Redis 的无盘复制解决什么问题，主节点如何把 RDB 发送给副本？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Diskless replication"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.022,
+      "results": [
+        {
+          "rank": 1,
+          "score": 33.314439,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 30.303308,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 3,
+          "score": 27.116831,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 24.906077,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 5,
+          "score": 17.540827,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        }
+      ]
+    },
+    {
+      "id": "redis-030",
+      "category": "replication",
+      "question": "如何限制 Redis 主节点在可用副本数量不足或复制延迟过大时停止接受写入？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Allow writes only with N attached replicas"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.021,
+      "results": [
+        {
+          "rank": 1,
+          "score": 67.325808,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 2,
+          "score": 62.096372,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 50.307394,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 49.901543,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 5,
+          "score": 48.196859,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-031",
+      "category": "replication",
+      "question": "Redis 主从复制如何保证 key 过期操作在副本之间保持一致？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "How Redis replication deals with expires on keys"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.03,
+      "results": [
+        {
+          "rank": 1,
+          "score": 60.415074,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 45.897932,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 44.489716,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 32.209519,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 5,
+          "score": 26.265229,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-032",
+      "category": "replication",
+      "question": "哪个命令可以判断当前 Redis 实例是 master、replica 还是 Sentinel，并返回角色相关信息？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/role.md",
+          "section_path": [
+            "ROLE"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.078,
+      "results": [
+        {
+          "rank": 1,
+          "score": 58.450962,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 2,
+          "score": 47.270732,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 3,
+          "score": 42.724146,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 41.704613,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 37.571157,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "redis-033",
+      "category": "replication",
+      "question": "FAILOVER 命令发起的是同步还是后台故障切换，可以怎样设置超时或中止？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/failover.md",
+          "section_path": [
+            "FAILOVER"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.037,
+      "results": [
+        {
+          "rank": 1,
+          "score": 64.607036,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 52.498332,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 3,
+          "score": 50.743491,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 47.21507,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 5,
+          "score": 40.939149,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        }
+      ]
+    },
+    {
+      "id": "redis-034",
+      "category": "sentinel",
+      "question": "Sentinel 的 TILT 模式在什么情况下触发，进入后为什么要暂时停止部分操作？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "TILT mode"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.037,
+      "results": [
+        {
+          "rank": 1,
+          "score": 50.126226,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 2,
+          "score": 46.769668,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 42.594081,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 4,
+          "score": 40.224845,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 35.45769,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        }
+      ]
+    },
+    {
+      "id": "redis-035",
+      "category": "sentinel",
+      "question": "Sentinel 选择要提升为主节点的副本时主要考虑哪些优先级和复制状态？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "Replica selection and priority"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.035,
+      "results": [
+        {
+          "rank": 1,
+          "score": 50.18307,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 43.509865,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 3,
+          "score": 36.936242,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 33.712186,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 5,
+          "score": 33.139749,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-036",
+      "category": "sentinel",
+      "question": "在 Docker 或 NAT 环境部署 Sentinel 时，自动发现的 IP 和端口为什么可能不可达？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Sentinel quick start",
+            "Sentinel, Docker, NAT, and possible issues"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.045,
+      "results": [
+        {
+          "rank": 1,
+          "score": 62.803825,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 2,
+          "score": 51.345004,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 50.38825,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 48.128389,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 5,
+          "score": 30.695842,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        }
+      ]
+    },
+    {
+      "id": "redis-037",
+      "category": "cluster",
+      "question": "Redis Cluster 一共有多少个哈希槽，普通 key 如何映射到槽？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Overview of Redis Cluster main components",
+            "Key distribution model"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.055,
+      "results": [
+        {
+          "rank": 1,
+          "score": 28.9018,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 24.728971,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 11.401238,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 4,
+          "score": 10.510656,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 5,
+          "score": 9.699589,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        }
+      ]
+    },
+    {
+      "id": "redis-038",
+      "category": "cluster",
+      "question": "Redis Cluster 的 hash tag 如何让多个 key 落入同一个哈希槽？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Overview of Redis Cluster main components",
+            "Hash tags"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.063,
+      "results": [
+        {
+          "rank": 1,
+          "score": 33.610088,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 2,
+          "score": 28.36246,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 3,
+          "score": 20.529188,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 20.400235,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 20.393217,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-039",
+      "category": "cluster",
+      "question": "槽迁移期间 ASK 重定向与 MOVED 有什么区别，客户端收到 ASK 后应做什么？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "ASK redirection"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.023,
+      "results": [
+        {
+          "rank": 1,
+          "score": 35.628606,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 2,
+          "score": 33.490712,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 26.95295,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 24.786196,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 24.111299,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-040",
+      "category": "cluster",
+      "question": "发生网络分区时，Redis Cluster 的少数派一侧是否仍然可用？多数派恢复服务还需要什么条件？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Client and Server roles in the Redis cluster protocol",
+            "Availability"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.054,
+      "results": [
+        {
+          "rank": 1,
+          "score": 64.121686,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 59.4184,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 51.172137,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 4,
+          "score": 50.1931,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 5,
+          "score": 49.078179,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-041",
+      "category": "cluster",
+      "question": "CLUSTER SHARDS 返回的信息主要用来描述什么？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/cluster-shards.md",
+          "section_path": [
+            "CLUSTER SHARDS"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.044,
+      "results": [
+        {
+          "rank": 1,
+          "score": 31.061213,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 2,
+          "score": 30.439459,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 25.698609,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 4,
+          "score": 22.863863,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 5,
+          "score": 22.368869,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    },
+    {
+      "id": "redis-042",
+      "category": "configuration",
+      "question": "CONFIG REWRITE 如何把运行时配置写回 redis.conf，怎样避免崩溃后配置文件只写了一半？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/config-rewrite.md",
+          "section_path": [
+            "Atomic rewrite process"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.044,
+      "results": [
+        {
+          "rank": 1,
+          "score": 57.022609,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 45.958503,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        },
+        {
+          "rank": 3,
+          "score": 44.037917,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 35.062359,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 32.558654,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-043",
+      "category": "security",
+      "question": "启用 Redis TLS 会带来怎样的性能影响，官方建议如何评估？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/encryption.md",
+          "section_path": [
+            "Getting Started",
+            "Performance considerations"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.021,
+      "results": [
+        {
+          "rank": 1,
+          "score": 36.623892,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 30.573322,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 30.152695,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 26.897158,
+          "chunk_id": "b930f098577258869304",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "本文为 SupportPilot 对 Microsoft Azure Architecture Center Cache-Aside Pattern 与 Redis Cache-Aside 用例的工程化摘要。\n实际系统还需结合业务一致性要求、并发规模和故障模式做压测与演练。"
+        },
+        {
+          "rank": 5,
+          "score": 26.127981,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        }
+      ]
+    },
+    {
+      "id": "redis-044",
+      "category": "security",
+      "question": "Redis ACL 用户密码在内部是明文保存的吗，使用什么形式存储？",
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0,
+      "first_relevant_rank": null,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/acl.md",
+          "section_path": [
+            "How passwords are stored internally"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 0.028,
+      "results": [
+        {
+          "rank": 1,
+          "score": 56.00485,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 2,
+          "score": 54.758475,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 3,
+          "score": 50.694446,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 4,
+          "score": 48.426173,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 5,
+          "score": 46.945656,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        }
+      ]
+    },
+    {
+      "id": "out-002",
+      "category": "out_of_scope",
+      "question": "请给出 MongoDB WiredTiger cacheSizeGB 的最佳生产配置。",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 0.011,
+      "results": [
+        {
+          "rank": 1,
+          "score": 14.816808,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 2,
+          "score": 14.181308,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 12.452696,
+          "chunk_id": "e5ce3d03848653b1b66e",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "这三个名称是工程实践中对不同缓存失效模式的归纳，不是 Redis 服务端的三个错误码。\n判断时要看影响范围、请求的数据是否存在，以及回源请求是否围绕单个热点 Key。"
+        },
+        {
+          "rank": 4,
+          "score": 11.75587,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 5,
+          "score": 11.226348,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "out-003",
+      "category": "out_of_scope",
+      "question": "如何调整 JVM G1GC 的 InitiatingHeapOccupancyPercent 来降低停顿？",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 0.011,
+      "results": [
+        {
+          "rank": 1,
+          "score": 14.816808,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 2,
+          "score": 14.739213,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 3,
+          "score": 13.300525,
+          "chunk_id": "de9b04b92e29e4968e8b",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存雪崩"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存雪崩指大量 Key 在接近的时间失效，或整个缓存层暂时不可用，导致大量请求同时回源到数据库或下游服务。\n核心特征是影响的 Key 范围广，流量峰值可能压垮下游。\n\n常见缓解方法包括：在 TTL 上增加随机抖动，避免大批 Key 同时过期；对回源路径进行限流、排队和降级；\n对核心数据预热；监控命中率、过期量和下游负载；对 Redis 部署做高可用与故障演练。"
+        },
+        {
+          "rank": 4,
+          "score": 13.106674,
+          "chunk_id": "9a398a8b10b62128953f",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "来源与适用范围"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "本文是 SupportPilot 对 Redis 缓存层工程实践的归纳，不是 Redis 命令规范。\n主要参考 Redis 的 Cache Layer Architecture、Cache-Aside 用例和 Thundering Herd 工程文章。"
+        },
+        {
+          "rank": 5,
+          "score": 13.07548,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        }
+      ]
+    },
+    {
+      "id": "out-004",
+      "category": "out_of_scope",
+      "question": "Nginx upstream 的 least_conn 和 ip_hash 应该如何选择？",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 0.011,
+      "results": [
+        {
+          "rank": 1,
+          "score": 20.453202,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 2,
+          "score": 19.378644,
+          "chunk_id": "59f4f5a6853087a2c574",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "TTL 和预热"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "TTL 过短会导致频繁回源，TTL 过长则增加返回过期数据的时间。应根据数据变更频率、可容忍的过期时间、回源成本和访问热度分类设置。\n大批数据不应使用完全相同的过期时刻；可以增加随机抖动。确定会在启动后被集中访问的核心数据可以提前预热。"
+        },
+        {
+          "rank": 3,
+          "score": 17.710663,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 4,
+          "score": 13.572946,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        },
+        {
+          "rank": 5,
+          "score": 12.21563,
+          "chunk_id": "1c8259122040e280b7cc",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "Cache-Aside 读路径"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "Cache-Aside 由应用负责缓存与主数据源之间的协调。读取时先查缓存；命中则直接返回；未命中则查询主数据源，\n将结果写入缓存并设置合理 TTL，然后返回。缓存不应被当作唯一的持久化数据源。"
+        }
+      ]
+    },
+    {
+      "id": "out-005",
+      "category": "out_of_scope",
+      "question": "请查询今天刚发布的 Redis 安全漏洞和最新 CVE 编号。",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 0.014,
+      "results": [
+        {
+          "rank": 1,
+          "score": 35.429712,
+          "chunk_id": "07f77117521b43518e15",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "写路径与失效"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "常见做法是先成功更新主数据源，再删除或使对应缓存失效。\n如果先删缓存、后更新数据库，中间窗口中的并发读请求可能把旧数据重新写回缓存。\n\nCache-Aside 通常只提供最终一致性，不自动保证强一致。对 read-after-write 有严格要求的路径，\n需要评估是否绕过缓存、使用 write-through，或通过版本号和事件机制进行协调。"
+        },
+        {
+          "rank": 2,
+          "score": 34.643548,
+          "chunk_id": "199027e686b6fef22295",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存击穿"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存击穿通常是单个高频热点 Key 失效。许多并发请求在同一时刻发现未命中，然后重复回源并重建同一份数据。\n英文资料常称为 cache stampede 或 thundering herd。\n\n常见缓解方法是 single-flight/request coalescing：只允许一个请求回源重建，其他请求等待或复用结果。\n也可以使用带超时的互斥锁、逻辑过期、提前刷新和热点预热。锁必须有超时、所有者标识和安全释放逻辑，避免死锁或误删他人的锁。"
+        },
+        {
+          "rank": 3,
+          "score": 31.8107,
+          "chunk_id": "4666a18109f654735329",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "概念边界",
+            "缓存穿透"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "缓存穿透指请求持续查询本来就不存在的数据。由于缓存和数据库都无法返回正常对象，如果应用不记录这类结果，每次请求都会穿过缓存访问下游。\n\n常见缓解方法包括：在合理的短 TTL 内缓存“不存在”结果；在请求入口做格式、范围和权限校验；\n使用布隆过滤器快速判断某个标识肯定不在集合中；对异常未命中率进行限流和告警。\n布隆过滤器存在假阳性，应用仍需处理实际数据不存在的情况。"
+        },
+        {
+          "rank": 4,
+          "score": 22.082962,
+          "chunk_id": "4ed8347fe2a0ab003ac9",
+          "title": "Redis 缓存失效模式：雪崩、击穿与穿透",
+          "section_path": [
+            "快速区分"
+          ],
+          "source_path": "engineering/cache-failure-patterns.md",
+          "source_url": "https://redis.io/blog/cache-layer-architecture-guide/",
+          "source_type": "engineering_practice",
+          "content": "- 大量 Key 或整个缓存层出现问题：优先按雪崩排查。\n- 单个热点 Key 过期后并发回源：优先按击穿排查。\n- 请求的数据在业务上本来就不存在：优先按穿透排查。"
+        },
+        {
+          "rank": 5,
+          "score": 19.089559,
+          "chunk_id": "2c58142e0ff80c7a6a7b",
+          "title": "Cache-Aside 与缓存一致性实践",
+          "section_path": [
+            "监控与容量"
+          ],
+          "source_path": "engineering/cache-aside-consistency.md",
+          "source_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "source_type": "engineering_practice",
+          "content": "应同时监控命中率、回源次数、回源延迟、Key 过期和驱逐数量、热点 Key、Redis 内存以及下游数据库的负载。\n命中率下降只是信号，还要结合请求量与回源成本判断影响。"
+        }
+      ]
+    }
+  ]
+}

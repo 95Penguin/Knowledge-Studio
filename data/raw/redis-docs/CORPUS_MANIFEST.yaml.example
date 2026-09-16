@@ -1,0 +1,17 @@
+schema_version: 1
+corpus_id: redis-ops-7.4-v1
+product: Redis Open Source
+target_version: "7.4"
+language: en
+repository: https://github.com/redis/docs.git
+requested_ref: main
+resolved_commit: GENERATED_BY_FETCH_SCRIPT
+retrieved_at_utc: GENERATED_BY_FETCH_SCRIPT
+license_file: LICENSE
+license_sha256: GENERATED_BY_FETCH_SCRIPT
+selection_file: config/corpus/redis-ops-7.4-v1.paths
+exclusion_file: config/corpus/redis-ops-7.4-v1.exclude-patterns
+file_count: GENERATED_BY_FETCH_SCRIPT
+total_bytes: GENERATED_BY_FETCH_SCRIPT
+files_manifest: FILES.sha256
+

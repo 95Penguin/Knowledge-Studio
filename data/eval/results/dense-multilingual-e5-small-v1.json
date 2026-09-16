@@ -1,0 +1,1727 @@
+{
+  "retriever": "dense-cosine",
+  "parameters": {
+    "model": "intfloat/multilingual-e5-small",
+    "model_revision": "d1d99a1efae6779390caba937d92c54b5bc70e51",
+    "dimension": 384,
+    "similarity": "cosine_via_normalized_dot_product",
+    "top_k": 5
+  },
+  "questions_total": 20,
+  "questions_evaluated_for_recall": 19,
+  "questions_excluded_from_recall": 1,
+  "recall_at_5": 0.684211,
+  "hit_count": 13,
+  "latency_ms": {
+    "average": 16.336,
+    "p50": 9.702,
+    "p95": 10.545
+  },
+  "recall_by_category": {
+    "cluster": 0.5,
+    "latency": 0.75,
+    "memory": 0.0,
+    "persistence": 1.0,
+    "replication": 0.666667,
+    "security": 1.0,
+    "sentinel": 1.0
+  },
+  "details": [
+    {
+      "id": "redis-001",
+      "category": "latency",
+      "question": "如何开启 Redis 延迟监控，并把需要记录的延迟阈值设置为 100 毫秒？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "section_path": [
+            "How to enable latency monitoring"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "section_path": [
+            "How to enable latency monitoring"
+          ]
+        }
+      ],
+      "latency_ms": 144.012,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.861658,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.850498,
+          "chunk_id": "cbef247c349b2a45b796",
+          "title": "Redis latency monitoring",
+          "section_path": [
+            "How to enable latency monitoring"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency-monitor/",
+          "content": "What is high latency for one use case may not be considered high latency for another. Some applications may require that all queries be served in less than 1 millisecond. For other applications, it may be acceptable for a small amount of clients to experience a 2 second latency on occasion.\n\nThe first step to enable the latency monitor is to set a **latency threshold** in milliseconds. Only events that take longer than the specified threshold will be logged as latency spikes. The user should set the threshold according to their needs. For example, if the application requires a maximum acceptable latency of 100 milliseconds, the threshold should be set to log all the events blocking the server for a time equal or greater to 100 milliseconds.\n\nEnable the latency monitor at runtime in a production server\nwith the following command:\n\nCONFIG SET latency-monitor-threshold 100\n\nMonitoring is turned off by default (threshold set to 0), even if the actual cost of latency monitoring is near zero. While the memory requirements of latency monitoring are very small, there is no good reason to raise the baseline memory usage of a Redis instance that is working well."
+        },
+        {
+          "rank": 3,
+          "score": 0.850333,
+          "chunk_id": "63a6f687e102dbd45d99",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "*   `errorstat_XXX`: `count=XXX`\n\nIf the server detects that this section was flooded with an excessive number of errors, it will be disabled, show a single `ERRORSTATS_DISABLED` error, and print the errors to the server log.\nThis can be reset by `CONFIG RESETSTAT`.\n\nThe **hotkeys** section provides information about hotkeys tracking. It consists of the following fields:\n\n*   `tracking_active`: Boolean flag (0 or 1) indicating whether hotkeys tracking is currently active.\n*   `used_memory`: Memory overhead in bytes of the structures used for hotkeys tracking.\n*   `cpu_time`: Time in milliseconds spent updating the hotkey tracking structures.\n\nThe **sentinel** section is only available in Redis Sentinel instances. It consists of the following fields:\n\n*   `sentinel_masters`: Number of Redis masters monitored by this Sentinel instance\n*   `sentinel_tilt`: A value of 1 means this sentinel is in TILT mode\n*   `sentinel_tilt_since_seconds`: Duration in seconds of current TILT, or -1 if not TILTed. Added in Redis 7.0.0\n*   `sentinel_total_tilt`: The number of times this sentinel has been in TILT mode since running.\n*   `sentinel_running_scripts`: The number of scripts this Sentinel is currently executing\n*   `sentinel_scripts_queue_length`: The length of the queue of user scripts that are pending execution\n*   `sentinel_simulate_failure_flags`: Flags for the `SENTINEL SIMULATE-FAILURE` command\n\nThe **cluster** section contains a single field:\n\n*   `cluster_enabled`: Indicates whether Redis cluster is enabled.\n\nThe **modules** section contains additional information about loaded modules if the modules provide it. The field part of property lines in this section are always prefixed with the module's name.\n\n_Redis Search fields_"
+        },
+        {
+          "rank": 4,
+          "score": 0.846906,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.84648,
+          "chunk_id": "7482ecb9fd7e2299c772",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "This document will help you understand what the problem could be if you\nare experiencing latency problems with Redis.\n\nIn this context *latency* is the maximum delay between the time a client\nissues a command and the time the reply to the command is received by the\nclient. Usually Redis processing time is extremely low, in the sub microsecond\nrange, but there are certain conditions leading to higher latency figures.\n\nI've little time, give me the checklist\n---\n\nThe following documentation is very important in order to run Redis in\na low latency fashion. However I understand that we are busy people, so\nlet's start with a quick checklist. If you fail following these steps, please\nreturn here to read the full documentation.\n\n1. Make sure you are not running slow commands that are blocking the server. Use the Redis Slow Log feature to check this.\n2. For EC2 users, make sure you use HVM based modern EC2 instances, like m3.medium. Otherwise fork() is too slow.\n3. Transparent huge pages must be disabled from your kernel. Use `echo never > /sys/kernel/mm/transparent_hugepage/enabled` to disable them, and restart your Redis process.\n4. If you are using a virtual machine, it is possible that you have an intrinsic latency that has nothing to do with Redis. Check the minimum latency you can expect from your runtime environment using `./redis-cli --intrinsic-latency 100`. Note: you need to run this command in *the server* not in the client.\n5. Enable and use the Latency monitor feature of Redis in order to get a human readable description of the latency events and causes in your Redis instance.\n\nIn general, use the following table for durability VS latency/performance tradeoffs, ordered from stronger safety to better latency."
+        }
+      ]
+    },
+    {
+      "id": "redis-002",
+      "category": "latency",
+      "question": "Redis 出现延迟尖峰时，哪个命令可以给出人类可读的诊断和处理建议？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/latency-doctor.md",
+          "section_path": [
+            "LATENCY DOCTOR"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 9.428,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.855228,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.850412,
+          "chunk_id": "7726694ed4444c6aa36d",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "The consequence is even if Redis processes most commands in sub microsecond\nrange, a client performing many roundtrips to the server will have to pay\nfor these network and system related latencies.\n\nAn efficient client will therefore try to limit the number of roundtrips by\npipelining several commands together. This is fully supported by the servers\nand most clients. Aggregated commands like MSET/MGET can be also used for\nthat purpose. Starting with Redis 2.4, a number of commands also support\nvariadic parameters for all data types.\n\nHere are some guidelines:\n\n+ If you can afford it, prefer a physical machine over a VM to host the server.\n+ Do not systematically connect/disconnect to the server (especially true\n  for web based applications). Keep your connections as long lived as possible.\n+ If your client is on the same host than the server, use Unix domain sockets.\n+ Prefer to use aggregated commands (MSET/MGET), or commands with variadic\n  parameters (if possible) over pipelining.\n+ Prefer to use pipelining (if possible) over sequence of roundtrips.\n+ Redis supports Lua server-side scripting to cover cases that are not suitable\n  for raw pipelining (for instance when the result of a command is an input for\n  the following commands).\n\nOn Linux, some people can achieve better latencies by playing with process\nplacement (taskset), cgroups, real-time priorities (chrt), NUMA\nconfiguration (numactl), or by using a low-latency kernel. Please note\nvanilla Redis is not really suitable to be bound on a **single** CPU core.\nRedis can fork background tasks that can be extremely CPU consuming\nlike `BGSAVE` or `BGREWRITEAOF`. These tasks must **never** run on the same core\nas the main event loop.\n\nIn most situations, these kind of system level optimizations are not needed.\nOnly do them if you require them, and if you are familiar with them.\n\nSingle threaded nature of Redis\n-------------------------------"
+        },
+        {
+          "rank": 3,
+          "score": 0.846036,
+          "chunk_id": "c7bc9773befc8375eb42",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "The following is an example of what you'll see printed in the log file once the software watchdog detects a delay longer than the configured one:\n\n[8547 | signal handler] (1333114359)\n    --- WATCHDOG TIMER EXPIRED ---\n    /lib/libc.so.6(nanosleep+0x2d) [0x7f16b5c2d39d]\n    /lib/libpthread.so.0(+0xf8f0) [0x7f16b5f158f0]\n    /lib/libc.so.6(nanosleep+0x2d) [0x7f16b5c2d39d]\n    /lib/libc.so.6(usleep+0x34) [0x7f16b5c62844]\n    ./redis-server(debugCommand+0x3e1) [0x43ab41]\n    ./redis-server(call+0x5d) [0x415a9d]\n    ./redis-server(processCommand+0x375) [0x415fc5]\n    ./redis-server(processInputBuffer+0x4f) [0x4203cf]\n    ./redis-server(readQueryFromClient+0xa0) [0x4204e0]\n    ./redis-server(aeProcessEvents+0x128) [0x411b48]\n    ./redis-server(aeMain+0x2b) [0x411dbb]\n    ./redis-server(main+0x2b6) [0x418556]\n    /lib/libc.so.6(__libc_start_main+0xfd) [0x7f16b5ba1c4d]\n    ./redis-server() [0x411099]\n    ------\n\nNote: in the example the **DEBUG SLEEP** command was used in order to block the server. The stack trace is different if the server blocks in a different context.\n\nIf you happen to collect multiple watchdog stack traces you are encouraged to send everything to the Redis Google Group: the more traces we obtain, the simpler it will be to understand what the problem with your instance is."
+        },
+        {
+          "rank": 4,
+          "score": 0.843912,
+          "chunk_id": "828674256da6af8020af",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "It is important to use it only as *last resort* when there is no way to track the issue by other means.\n\nThis is how this feature works:\n\n* The user enables the software watchdog using the `CONFIG SET` command.\n* Redis starts monitoring itself constantly.\n* If Redis detects that the server is blocked into some operation that is not returning fast enough, and that may be the source of the latency issue, a low level report about where the server is blocked is dumped on the log file.\n* The user contacts the developers writing a message in the Redis Google Group, including the watchdog report in the message.\n\nNote that this feature cannot be enabled using the redis.conf file, because it is designed to be enabled only in already running instances and only for debugging purposes.\n\nTo enable the feature just use the following:\n\nCONFIG SET watchdog-period 500\n\nThe period is specified in milliseconds. In the above example I specified to log latency issues only if the server detects a delay of 500 milliseconds or greater. The minimum configurable period is 200 milliseconds.\n\nWhen you are done with the software watchdog you can turn it off setting the `watchdog-period` parameter to 0. **Important:** remember to do this because keeping the instance with the watchdog turned on for a longer time than needed is generally not a good idea.\n\nThe following is an example of what you'll see printed in the log file once the software watchdog detects a delay longer than the configured one:"
+        },
+        {
+          "rank": 5,
+          "score": 0.842202,
+          "chunk_id": "71342c9f2c73a2d96d2b",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "*   `loading`: Flag indicating if the load of a dump file is on-going *   `async_loading`: Currently loading replication data-set asynchronously while serving old data. This means `repl-diskless-load` is enabled and set to `swapdb`. Added in Redis 7.0. *   `current_cow_peak`: The peak size in bytes of copy-on-write memory\n     while a child fork is running *   `current_cow_size`: The size in bytes of copy-on-write memory\n     while a child fork is running *   `current_cow_size_age`: The age, in seconds, of the `current_cow_size` value. *   `current_fork_perc`: The percentage of progress of the current fork process. For AOF and RDB forks it is the percentage of `current_save_keys_processed` out of `current_save_keys_total`. *   `current_save_keys_processed`: Number of keys processed by the current save operation *   `current_save_keys_total`: Number of keys at the beginning of the current save operation *   `rdb_changes_since_last_save`: Number of changes since the last dump *   `rdb_bgsave_in_progress`: Flag indicating a RDB save is on-going *   `rdb_last_save_time`: Epoch-based timestamp of last successful RDB save *   `rdb_last_bgsave_status`: Status of the last RDB save operation *   `rdb_last_bgsave_time_sec`: Duration of the last RDB save operation in\n     seconds *   `rdb_current_bgsave_time_sec`: Duration of the on-going RDB save operation\n     if any *   `rdb_last_cow_size`: The size in bytes of copy-on-write memory during\n     the last RDB save operation *   `rdb_last_load_keys_expired`: Number of volatile keys deleted during the last RDB loading. Added in Redis 7.0. *   `rdb_last_load_keys_loaded`: Number of keys loaded during the last RDB loading. Added in Redis 7.0. *   `aof_enabled`: Flag indicating AOF logging is activated *   `aof_rewrite_in_progress`: Flag indicating a AOF rewrite operation is\n     on-going *   `aof_rewrite_scheduled`: Flag indicating an AOF rewrite operation\n     will be scheduled once the on-going RDB save is complete. *   `aof_last_rewrite_time_sec`: Duration of the last AOF rewrite operation in\n     seconds *   `aof_current_rewrite_time_sec`: Duration of the on-going AOF rewrite\n     operation if any *   `aof_last_bgrewrite_status`: Status of the last AOF rewrite operation *   `aof_last_write_status`: Status of the last write operation to the AOF"
+        }
+      ]
+    },
+    {
+      "id": "redis-003",
+      "category": "latency",
+      "question": "SLOWLOG GET 记录的执行时间是否包含与客户端通信和发送响应的时间？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/slowlog-get.md",
+          "section_path": [
+            "SLOWLOG GET"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/slowlog-get.md",
+          "section_path": [
+            "SLOWLOG GET"
+          ]
+        }
+      ],
+      "latency_ms": 9.737,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.87256,
+          "chunk_id": "e284a1796248a8ac4ff9",
+          "title": "SLOWLOG GET",
+          "section_path": [
+            "SLOWLOG GET"
+          ],
+          "source_path": "content/commands/slowlog-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/slowlog-get/",
+          "content": "The `SLOWLOG GET` command returns entries from the slow log in chronological order.\n\nThe Redis Slow Log is a system to log queries that exceeded a specified execution time.\nThe execution time does not include I/O operations like talking with the client, sending the reply and so forth, but just the time needed to actually execute the command (this is the only stage of command execution where the thread is blocked and can not serve other requests in the meantime).\n\nA new entry is added to the slow log whenever a command exceeds the execution time threshold defined by the `slowlog-log-slower-than` configuration directive.\nThe maximum number of entries in the slow log is governed by the `slowlog-max-len` configuration directive.\n\nBy default the command returns latest ten entries in the log. The optional `count` argument limits the number of returned entries, so the command returns at most up to `count` entries, the special number -1 means return all entries.\n\nEach entry from the slow log is comprised of the following seven values:\n\nThe logged argument array (value 4) is truncated when the command has more arguments than the `slowlog-max-argc` configuration directive allows (32 by default). In that case, the last logged element is replaced with a string of the form `... (N more arguments)`. The total argument count (value 7) always reflects the command's original argument count, captured before truncation, so it can be read directly without parsing that string.\n\nThe entry's unique ID can be used in order to avoid processing slow log entries multiple times (for instance you may have a script sending you an email alert for every new slow log entry).\nThe ID is never reset in the course of the Redis server execution, only a server\nrestart will reset it."
+        },
+        {
+          "rank": 2,
+          "score": 0.848317,
+          "chunk_id": "0d39a7b049ac014bdefd",
+          "title": "SLOWLOG GET",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/slowlog-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/slowlog-get/",
+          "content": "The seventh element of each entry reports the command's total argument count. This is most useful for variadic commands whose logged argument list has been truncated. In the following example, the `slowlog-max-argc` limit is left at its default of 32 and a `SADD` command is issued with 33 arguments (the command name, the key, and 31 members):\n\n```\nredis> CONFIG SET slowlog-log-slower-than 0\nOK\nredis> SLOWLOG RESET\nOK\nredis> SADD myset 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33\n(integer) 31\nredis> SLOWLOG GET 1\n1) 1) (integer) 12\n   2) (integer) 1752422400\n   3) (integer) 21\n   4)  1) \"SADD\"\n       2) \"myset\"\n       3) \"3\"\n       4) \"4\"\n          ...\n      32) \"... (2 more arguments)\"\n   5) \"127.0.0.1:52276\"\n   6) \"\"\n   7) (integer) 33\n```\n\nThe logged argument array (element 4) is truncated to 32 items, with the final item indicating how many more arguments were omitted. The argument count (element 7) still reports the original total of `33`."
+        },
+        {
+          "rank": 3,
+          "score": 0.844055,
+          "chunk_id": "ae6b57e820a65fa39949",
+          "title": "SLOWLOG GET",
+          "section_path": [
+            "Return information"
+          ],
+          "source_path": "content/commands/slowlog-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/slowlog-get/",
+          "content": "Array reply: a list of slow log entries per the above format."
+        },
+        {
+          "rank": 4,
+          "score": 0.843302,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.842214,
+          "chunk_id": "231c20a936a958d07dfb",
+          "title": "ACL LOG",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/acl-log.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-log/",
+          "content": "```\n> AUTH someuser wrongpassword\n(error) WRONGPASS invalid username-password pair\n> ACL LOG 1\n1)  1) \"count\"\n    2) (integer) 1\n    3) \"reason\"\n    4) \"auth\"\n    5) \"context\"\n    6) \"toplevel\"\n    7) \"object\"\n    8) \"AUTH\"\n    9) \"username\"\n   10) \"someuser\"\n   11) \"age-seconds\"\n   12) \"8.038\"\n   13) \"client-info\"\n   14) \"id=3 addr=127.0.0.1:57275 laddr=127.0.0.1:6379 fd=8 name= age=16 idle=0 flags=N db=0 sub=0 psub=0 ssub=0 multi=-1 qbuf=48 qbuf-free=16842 argv-mem=25 multi-mem=0 rbs=1024 rbp=0 obl=0 oll=0 omem=0 tot-mem=18737 events=r cmd=auth user=default redir=-1 resp=2\"\n   15) \"entry-id\"\n   16) (integer) 0\n   17) \"timestamp-created\"\n   18) (integer) 1675361492408\n   19) \"timestamp-last-updated\"\n   20) (integer) 1675361492408\n```"
+        }
+      ]
+    },
+    {
+      "id": "redis-004",
+      "category": "latency",
+      "question": "Redis 延迟突然升高时，官方排查清单建议优先检查哪些常见原因？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "section_path": [
+            "Diagnosing latency issues"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "section_path": [
+            "Diagnosing latency issues"
+          ]
+        }
+      ],
+      "latency_ms": 9.668,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.85142,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.838277,
+          "chunk_id": "0f4b24e74c75bc6eeaf9",
+          "title": "Troubleshooting Redis",
+          "section_path": [
+            "List of known critical bugs in Redis 3.0.x, 2.8.x and 2.6.x"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/troubleshooting.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/troubleshooting/",
+          "content": "To find a list of critical bugs please refer to the changelogs:\n\n* Redis 3.0 Changelog.\n* Redis 2.8 Changelog.\n* Redis 2.6 Changelog.\n\nCheck the *upgrade urgency* level in each patch release to more easily spot\nreleases that included important fixes."
+        },
+        {
+          "rank": 3,
+          "score": 0.838149,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 4,
+          "score": 0.834744,
+          "chunk_id": "7482ecb9fd7e2299c772",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "This document will help you understand what the problem could be if you\nare experiencing latency problems with Redis.\n\nIn this context *latency* is the maximum delay between the time a client\nissues a command and the time the reply to the command is received by the\nclient. Usually Redis processing time is extremely low, in the sub microsecond\nrange, but there are certain conditions leading to higher latency figures.\n\nI've little time, give me the checklist\n---\n\nThe following documentation is very important in order to run Redis in\na low latency fashion. However I understand that we are busy people, so\nlet's start with a quick checklist. If you fail following these steps, please\nreturn here to read the full documentation.\n\n1. Make sure you are not running slow commands that are blocking the server. Use the Redis Slow Log feature to check this.\n2. For EC2 users, make sure you use HVM based modern EC2 instances, like m3.medium. Otherwise fork() is too slow.\n3. Transparent huge pages must be disabled from your kernel. Use `echo never > /sys/kernel/mm/transparent_hugepage/enabled` to disable them, and restart your Redis process.\n4. If you are using a virtual machine, it is possible that you have an intrinsic latency that has nothing to do with Redis. Check the minimum latency you can expect from your runtime environment using `./redis-cli --intrinsic-latency 100`. Note: you need to run this command in *the server* not in the client.\n5. Enable and use the Latency monitor feature of Redis in order to get a human readable description of the latency events and causes in your Redis instance.\n\nIn general, use the following table for durability VS latency/performance tradeoffs, ordered from stronger safety to better latency."
+        },
+        {
+          "rank": 5,
+          "score": 0.832564,
+          "chunk_id": "3cd46c18d680052a56c9",
+          "title": "CONFIG GET",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/config-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/config-get/",
+          "content": "```\nredis> config get *max-*-entries* maxmemory\n 1) \"maxmemory\"\n 2) \"0\"\n 3) \"hash-max-listpack-entries\"\n 4) \"512\"\n 5) \"hash-max-ziplist-entries\"\n 6) \"512\"\n 7) \"set-max-intset-entries\"\n 8) \"512\"\n 9) \"zset-max-listpack-entries\"\n10) \"128\"\n11) \"zset-max-ziplist-entries\"\n12) \"128\"\n```"
+        }
+      ]
+    },
+    {
+      "id": "redis-005",
+      "category": "memory",
+      "question": "如何查看一个 Redis key 及其 value 实际占用了多少内存？复杂数据结构如何提高估算精度？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-usage.md",
+          "section_path": [
+            "MEMORY USAGE"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 10.283,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.890538,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.887027,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 3,
+          "score": 0.883477,
+          "chunk_id": "a5b4e5efde8af3166e22",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis <= 6.2"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 4,
+          "score": 0.866079,
+          "chunk_id": "9d59632efeb9778e6eb5",
+          "title": "MEMORY USAGE",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/memory-usage.md",
+          "source_url": "https://redis.io/docs/latest/commands/memory-usage/",
+          "content": "With Redis v7.2.0 64-bit and **jemalloc**, the empty string measures as follows:\n\n```\n> SET \"\" \"\"\nOK\n> MEMORY USAGE \"\"\n(integer) 56\n```\n\nThese bytes are pure overhead at the moment as no actual data is stored, and are\nused for maintaining the internal data structures of the server (include internal allocator fragmentation). Longer keys and\nvalues show asymptotically linear usage.\n\n```\n> SET foo bar\nOK\n> MEMORY USAGE foo\n(integer) 56\n> SET foo2 mybar\nOK\n> MEMORY USAGE foo2\n(integer) 64\n> SET foo3 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\nOK\n> MEMORY USAGE foo3\n(integer) 160\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.865746,
+          "chunk_id": "da902c063088607a292a",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "Here is the meaning of all fields in the **clients** section:\n\n*   `connected_clients`: Number of client connections (excluding connections\n     from replicas)\n*   `cluster_connections`: An approximation of the number of sockets used by the\n     cluster's bus\n*   `maxclients`: The value of the `maxclients` configuration directive. This is\n    the upper limit for the sum of `connected_clients`, `connected_slaves` and\n    `cluster_connections`.\n*   `client_recent_max_input_buffer`: Biggest input buffer among current client connections\n*   `client_recent_max_output_buffer`: Biggest output buffer among current client connections\n*   `blocked_clients`: Number of clients pending on a blocking call (`BLPOP`,\n     `BRPOP`, `BRPOPLPUSH`, `BLMOVE`, `BZPOPMIN`, `BZPOPMAX`)\n*   `tracking_clients`: Number of clients being tracked (`CLIENT TRACKING`)\n*   `pubsub_clients`: Number of clients in pubsub mode (`SUBSCRIBE`, `PSUBSCRIBE`, `SSUBSCRIBE`). Added in Redis 7.4\n*   `watching_clients`: Number of clients in watching mode (`WATCH`). Added in Redis 7.4\n*   `clients_in_timeout_table`: Number of clients in the clients timeout table\n*   `total_watched_keys`: Number of watched keys. Added in Redis 7.4.\n*   `total_blocking_keys`: Number of blocking keys. Added in Redis 7.2.\n*   `total_blocking_keys_on_nokey`: Number of blocking keys that one or more clients that would like to be unblocked when the key is deleted. Added in Redis 7.2.\n\nHere is the meaning of all fields in the **memory** section:\n\nIdeally, the `used_memory_rss` value should be only slightly higher than\n`used_memory`.\nWhen rss >> used, a large difference may mean there is (external) memory fragmentation, which can be evaluated by checking\n`allocator_frag_ratio`, `allocator_frag_bytes`.\nWhen used >> rss, it means part of Redis memory has been swapped off by the\noperating system: expect some significant latencies.\n\nBecause Redis does not have control over how its allocations are mapped to\nmemory pages, high `used_memory_rss` is often the result of a spike in memory\nusage."
+        }
+      ]
+    },
+    {
+      "id": "redis-006",
+      "category": "memory",
+      "question": "哪个 Redis 命令可以分析实例正在经历的内存问题并给出建议？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-doctor.md",
+          "section_path": [
+            "MEMORY DOCTOR"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 9.033,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.870193,
+          "chunk_id": "123e95a59e5f51829b0c",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "If you want to investigate your latency issues related to the append only\nfile you can use the strace command under Linux:\n\nsudo strace -p $(pidof redis-server) -T -e trace=fdatasync\n\nThe above command will show all the fdatasync(2) system calls performed by\nRedis in the main thread. With the above command you'll not see the\nfdatasync system calls performed by the background thread when the\nappendfsync config option is set to **everysec**. In order to do so\njust add the -f switch to strace.\n\nIf you wish you can also see both fdatasync and write system calls with the\nfollowing command:\n\nsudo strace -p $(pidof redis-server) -T -e trace=fdatasync,write\n\nHowever since write(2) is also used in order to write data to the client\nsockets this will likely show too many things unrelated to disk I/O.\nApparently there is no way to tell strace to just show slow system calls so\nI use the following command:\n\nsudo strace -f -p $(pidof redis-server) -T -e trace=fdatasync,write 2>&1 | grep -v '0.0' | grep -v unfinished\n\nLatency generated by expires\n----------------------------\n\nRedis evict expired keys in two ways:\n\n+ One *lazy* way expires a key when it is requested by a command, but it is found to be already expired.\n+ One *active* way expires a few keys every 100 milliseconds.\n\nThe active expiring is designed to be adaptive. An expire cycle is started every 100 milliseconds (10 times per second), and will do the following:\n\n+ Sample `ACTIVE_EXPIRE_CYCLE_LOOKUPS_PER_LOOP` keys, evicting all the keys already expired.\n+ If the more than 25% of the keys were found expired, repeat."
+        },
+        {
+          "rank": 2,
+          "score": 0.866531,
+          "chunk_id": "8840938ba4deda661c1b",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "If instead a non trivial amount of the process memory is swapped on disk your\nlatency problems are likely related to swapping. If this is the case with your\nRedis instance you can further verify it using the **vmstat** command:\n\n$ vmstat 1\n    procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n     r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa\n     0  0   3980 697932 147180 1406456    0    0     2     2    2    0  4  4 91  0\n     0  0   3980 697428 147180 1406580    0    0     0     0 19088 16104  9  6 84  0\n     0  0   3980 697296 147180 1406616    0    0     0    28 18936 16193  7  6 87  0\n     0  0   3980 697048 147180 1406640    0    0     0     0 18613 15987  6  6 88  0\n     2  0   3980 696924 147180 1406656    0    0     0     0 18744 16299  6  5 88  0\n     0  0   3980 697048 147180 1406688    0    0     0     4 18520 15974  6  6 88  0\n    ^C\n\nThe interesting part of the output for our needs are the two columns **si**\nand **so**, that counts the amount of memory swapped from/to the swap file. If\nyou see non zero counts in those two columns then there is swapping activity\nin your system.\n\nFinally, the **iostat** command can be used to check the global I/O activity of\nthe system.\n\n$ iostat -xk 1\n    avg-cpu:  %user   %nice %system %iowait  %steal   %idle\n              13.55    0.04    2.92    0.53    0.00   82.95\n\nDevice:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await  svctm  %util\n    sda               0.77     0.00    0.01    0.00     0.40     0.00    73.65     0.00    3.62   2.58   0.00\n    sdb               1.27     4.75    0.82    3.54    38.00    32.32    32.19     0.11   24.80   4.24   1.85"
+        },
+        {
+          "rank": 3,
+          "score": 0.86614,
+          "chunk_id": "6d898b509040777ee44b",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "If you have latency concerns you should either not use slow commands against\nvalues composed of many elements, or you should run a replica using Redis\nreplication where you run all your slow queries.\n\nIt is possible to monitor slow commands using the Redis\nSlow Log feature.\n\nAdditionally, you can use your favorite per-process monitoring program\n(top, htop, prstat, etc ...) to quickly check the CPU consumption of the\nmain Redis process. If it is high while the traffic is not, it is usually\na sign that slow commands are used.\n\n**IMPORTANT NOTE**: a VERY common source of latency generated by the execution\nof slow commands is the use of the `KEYS` command in production environments.\n`KEYS`, as documented in the Redis documentation, should only be used for\ndebugging purposes. Since Redis 2.8 a new commands were introduced in order to\niterate the key space and other large collections incrementally, please check\nthe `SCAN`, `SSCAN`, `HSCAN` and `ZSCAN` commands for more information.\n\nLatency generated by fork\n-------------------------\n\nIn order to generate the RDB file in background, or to rewrite the Append Only File if AOF persistence is enabled, Redis has to fork background processes.\nThe fork operation (running in the main thread) can induce latency by itself.\n\nForking is an expensive operation on most Unix-like systems, since it involves\ncopying a good number of objects linked to the process. This is especially\ntrue for the page table associated to the virtual memory mechanism.\n\nFor instance on a Linux/AMD64 system, the memory is divided in 4 kB pages.\nTo convert virtual addresses to physical addresses, each process stores\na page table (actually represented as a tree) containing at least a pointer\nper page of the address space of the process. So a large 24 GB Redis instance\nrequires a page table of 24 GB / 4 kB * 8 = 48 MB.\n\nWhen a background save is performed, this instance will have to be forked,\nwhich will involve allocating and copying 48 MB of memory. It takes time\nand CPU, especially on virtual machines where allocation and initialization\nof a large memory chunk can be expensive."
+        },
+        {
+          "rank": 4,
+          "score": 0.865168,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.863989,
+          "chunk_id": "3cd46c18d680052a56c9",
+          "title": "CONFIG GET",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/config-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/config-get/",
+          "content": "```\nredis> config get *max-*-entries* maxmemory\n 1) \"maxmemory\"\n 2) \"0\"\n 3) \"hash-max-listpack-entries\"\n 4) \"512\"\n 5) \"hash-max-ziplist-entries\"\n 6) \"512\"\n 7) \"set-max-intset-entries\"\n 8) \"512\"\n 9) \"zset-max-listpack-entries\"\n10) \"128\"\n11) \"zset-max-ziplist-entries\"\n12) \"128\"\n```"
+        }
+      ]
+    },
+    {
+      "id": "redis-007",
+      "category": "memory",
+      "question": "大量小对象分别存成多个 key 时，Redis 官方文档建议如何利用 hash 节省内存？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "section_path": [
+            "Use hashes when possible"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 10.312,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.877769,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.876418,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 3,
+          "score": 0.870956,
+          "chunk_id": "b36f53f01beee02a5994",
+          "title": "Memory optimization",
+          "section_path": [
+            "Using hashes to abstract a very memory-efficient plain key-value store on top of Redis"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "How much memory do we save this way?\n\nI used the following Ruby program to test how this works:\n\n```ruby\nrequire 'rubygems'\nrequire 'redis'\n\nUSE_OPTIMIZATION = true\n\ndef hash_get_key_field(key)\n  s = key.split(':')\n  if s[1].length > 2\n    { key: s[0] + ':' + s[1][0..-3], field: s[1][-2..-1] }\n  else\n    { key: s[0] + ':', field: s[1] }\n  end\nend\n\ndef hash_set(r, key, value)\n  kf = hash_get_key_field(key)\n  r.hset(kf[:key], kf[:field], value)\nend\n\ndef hash_get(r, key, value)\n  kf = hash_get_key_field(key)\n  r.hget(kf[:key], kf[:field], value)\nend\n\nr = Redis.new\n(0..100_000).each do |id|\n  key = \"object:#{id}\"\n  if USE_OPTIMIZATION\n    hash_set(r, key, 'val')\n  else\n    r.set(key, 'val')\n  end\nend\n```\n\nThis is the result against a 64 bit instance of Redis 2.2:\n\n* USE_OPTIMIZATION set to true: 1.7 MB of used memory\n * USE_OPTIMIZATION set to false; 11 MB of used memory\n\nThis is an order of magnitude, I think this makes Redis more or less the most\nmemory efficient plain key value store out there.\n\n*WARNING*: for this to work, make sure that in your redis.conf you have\nsomething like this:\n\n```\nhash-max-zipmap-entries 256\n```\n\nAlso remember to set the following field accordingly to the maximum size\nof your keys and values:\n\n```\nhash-max-zipmap-value 1024\n```\n\nEvery time a hash exceeds the number of elements or element size specified\nit will be converted into a real hash table, and the memory saving will be lost."
+        },
+        {
+          "rank": 4,
+          "score": 0.870225,
+          "chunk_id": "a5b4e5efde8af3166e22",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis <= 6.2"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.866939,
+          "chunk_id": "2659b322cfc1992ca4d1",
+          "title": "Memory optimization",
+          "section_path": [
+            "Using hashes to abstract a very memory-efficient plain key-value store on top of Redis"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "So hashes are memory efficient. This is useful when using hashes\nto represent objects or to model other problems when there are group of\nrelated fields. But what about if we have a plain key value business?\n\nImagine we want to use Redis as a cache for many small objects, which can be JSON encoded objects, small HTML fragments, simple key -> boolean values\nand so forth. Basically, anything is a string -> string map with small keys\nand values.\n\nNow let's assume the objects we want to cache are numbered, like:\n\n* object:102393\n * object:1234\n * object:5\n\nThis is what we can do. Every time we perform a\nSET operation to set a new value, we actually split the key into two parts,\none part used as a key, and the other part used as the field name for the hash. For instance, the\nobject named \"object:1234\" is actually split into:\n\n* a Key named object:12\n* a Field named 34\n\nSo we use all the characters but the last two for the key, and the final\ntwo characters for the hash field name. To set our key we use the following\ncommand:\n\n```\nHSET object:12 34 somevalue\n```\n\nAs you can see every hash will end up containing 100 fields, which is an optimal compromise between CPU and memory saved.\n\nThere is another important thing to note, with this schema\nevery hash will have more or\nless 100 fields regardless of the number of objects we cached. This is because our objects will always end with a number and not a random string. In some way, the final number can be considered as a form of implicit pre-sharding.\n\nWhat about small numbers? Like object:2? We handle this case using just\n\"object:\" as a key name, and the whole number as the hash field name.\nSo object:2 and object:10 will both end inside the key \"object:\", but one\nas field name \"2\" and one as \"10\".\n\nHow much memory do we save this way?\n\nI used the following Ruby program to test how this works:"
+        }
+      ]
+    },
+    {
+      "id": "redis-008",
+      "category": "persistence",
+      "question": "appendfsync everysec 在性能和数据安全之间有什么权衡，故障时最多可能损失多少数据？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ]
+        }
+      ],
+      "latency_ms": 9.479,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.864006,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.84783,
+          "chunk_id": "7f2a3896479bd61e37cf",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "You can configure how many times Redis will\n`fsync` data on disk. There are\nthree options:\n\n* `appendfsync always`: `fsync` every time new commands are appended to the AOF. Very very slow, very safe. Note that the commands are appended to the AOF after a batch of commands from multiple clients or a pipeline are executed, so it means a single write and a single fsync (before sending the replies).\n* `appendfsync everysec`: `fsync` every second. Fast enough (since version 2.4 likely to be as fast as snapshotting), and you may lose 1 second of data if there is a disaster.\n* `appendfsync no`: Never `fsync`, just put your data in the hands of the Operating System. The faster and less safe method. Normally Linux will flush data every 30 seconds with this configuration, but it's up to the kernel's exact tuning.\n\nThe suggested (and default) policy is to `fsync` every second. It is\nboth fast and relatively safe. The `always` policy is very slow in\npractice, but it supports group commit, so if there are multiple parallel\nwrites Redis will try to perform a single `fsync` operation."
+        },
+        {
+          "rank": 3,
+          "score": 0.83983,
+          "chunk_id": "67c5cee75db7d7d5834e",
+          "title": "Diagnosing latency issues",
+          "section_path": [
+            "Diagnosing latency issues"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/",
+          "content": "We'll see how configuration can affect the amount and source of latency\nwhen using the AOF file.\n\nThe AOF can be configured to perform a fsync on disk in three different\nways using the **appendfsync** configuration option (this setting can be\nmodified at runtime using the **CONFIG SET** command).\n\n* When appendfsync is set to the value of **no** Redis performs no fsync.\nIn this configuration the only source of latency can be write(2).\nWhen this happens usually there is no solution since simply the disk can't\ncope with the speed at which Redis is receiving data, however this is\nuncommon if the disk is not seriously slowed down by other processes doing\nI/O.\n\n* When appendfsync is set to the value of **everysec** Redis performs a\nfsync every second. It uses a different thread, and if the fsync is still\nin progress Redis uses a buffer to delay the write(2) call up to two seconds\n(since write would block on Linux if a fsync is in progress against the\nsame file). However if the fsync is taking too long Redis will eventually\nperform the write(2) call even if the fsync is still in progress, and this\ncan be a source of latency.\n\n* When appendfsync is set to the value of **always** a fsync is performed\nat every write operation before replying back to the client with an OK code\n(actually Redis will try to cluster many commands executed at the same time\ninto a single fsync). In this mode performances are very low in general and\nit is strongly recommended to use a fast disk and a file system implementation\nthat can perform the fsync in short time.\n\nMost Redis users will use either the **no** or **everysec** setting for the\nappendfsync configuration directive. The suggestion for minimum latency is\nto avoid other processes doing I/O in the same system.\nUsing an SSD disk can help as well, but usually even non SSD disks perform\nwell with the append only file if the disk is spare as Redis writes\nto the append only file without performing any seek.\n\nIf you want to investigate your latency issues related to the append only\nfile you can use the strace command under Linux:"
+        },
+        {
+          "rank": 4,
+          "score": 0.838627,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.838572,
+          "chunk_id": "188493508cdf834fcacb",
+          "title": "Redis replication",
+          "section_path": [
+            "Allow writes only with N attached replicas"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "Starting with Redis 2.8, you can configure a Redis master to\naccept write queries only if at least N replicas are currently connected to the\nmaster.\n\nHowever, because Redis uses asynchronous replication it is not possible to ensure\nthe replica actually received a given write, so there is always a window for data\nloss.\n\nThis is how the feature works:\n\n* Redis replicas ping the master every second, acknowledging the amount of replication stream processed.\n* Redis masters will remember the last time it received a ping from every replica.\n* The user can configure a minimum number of replicas that have a lag not greater than a maximum number of seconds.\n\nIf there are at least N replicas, with a lag less than M seconds, then the write will be accepted.\n\nYou may think of it as a best effort data safety mechanism, where consistency is not ensured for a given write, but at least the time window for data loss is restricted to a given number of seconds. In general bound data loss is better than unbound one.\n\nIf the conditions are not met, the master will instead reply with an error and the write will not be accepted.\n\nThere are two configuration parameters for this feature:\n\n* min-replicas-to-write `<number of replicas>`\n* min-replicas-max-lag `<number of seconds>`\n\nFor more information, please check the example `redis.conf` file shipped with the\nRedis source distribution."
+        }
+      ]
+    },
+    {
+      "id": "redis-009",
+      "category": "persistence",
+      "question": "Redis 的 RDB 和 AOF 分别以什么方式保存数据？是否可以同时使用？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Redis persistence"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Redis persistence"
+          ]
+        }
+      ],
+      "latency_ms": 9.177,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.880591,
+          "chunk_id": "0766457f879752e55c4c",
+          "title": "Redis persistence",
+          "section_path": [
+            "Interactions between AOF and RDB persistence"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "Redis >= 2.4 makes sure to avoid triggering an AOF rewrite when an RDB\nsnapshotting operation is already in progress, or allowing a `BGSAVE` while the\nAOF rewrite is in progress. This prevents two Redis background processes\nfrom doing heavy disk I/O at the same time.\n\nWhen snapshotting is in progress and the user explicitly requests a log\nrewrite operation using `BGREWRITEAOF` the server will reply with an OK\nstatus code telling the user the operation is scheduled, and the rewrite\nwill start once the snapshotting is completed.\n\nIn the case both AOF and RDB persistence are enabled and Redis restarts the\nAOF file will be used to reconstruct the original dataset since it is\nguaranteed to be the most complete."
+        },
+        {
+          "rank": 2,
+          "score": 0.878458,
+          "chunk_id": "5fe1ebf311baaf41b158",
+          "title": "Redis persistence",
+          "section_path": [
+            "AOF disadvantages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "* AOF files are usually bigger than the equivalent RDB files for the same dataset.\n* AOF can be slower than RDB depending on the exact fsync policy. In general with fsync set to *every second* performance is still very high, and with fsync disabled it should be exactly as fast as RDB even under high load. Still RDB is able to provide more guarantees about the maximum latency even in the case of a huge write load.\n\n**Redis < 7.0**\n\n* AOF can use a lot of memory if there are writes to the database during a rewrite (these are buffered in memory and written to the new AOF at the end).\n* All write commands that arrive during rewrite are written to disk twice.\n* Redis could freeze writing and fsyncing these write commands to the new AOF file at the end of the rewrite.\n\nOk, so what should I use?\n---\n\nThe general indication you should use both persistence methods is if\nyou want a degree of data safety comparable to what PostgreSQL can provide you.\n\nIf you care a lot about your data, but still can live with a few minutes of\ndata loss in case of disasters, you can simply use RDB alone.\n\nThere are many users using AOF alone, but we discourage it since to have an\nRDB snapshot from time to time is a great idea for doing database backups,\nfor faster restarts, and in the event of bugs in the AOF engine.\n\nThe following sections will illustrate a few more details about the two persistence models."
+        },
+        {
+          "rank": 3,
+          "score": 0.874385,
+          "chunk_id": "b9722e4ac9aabaf91fe8",
+          "title": "Redis persistence",
+          "section_path": [
+            "Redis persistence"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "Persistence refers to the writing of data to durable storage, such as a solid-state disk (SSD). Redis provides a range of persistence options. These include:\n\n* **RDB** (Redis Database): RDB persistence performs point-in-time snapshots of your dataset at specified intervals.\n* **AOF** (Append Only File): AOF persistence logs every write operation received by the server. These operations can then be replayed again at server startup, reconstructing the original dataset. Commands are logged using the same format as the Redis protocol itself.\n* **No persistence**: You can disable persistence completely. This is sometimes used when caching.\n* **RDB + AOF**: You can also combine both AOF and RDB in the same instance.\n\nTo learn more about how to evaluate your Redis persistence strategy, read on."
+        },
+        {
+          "rank": 4,
+          "score": 0.870677,
+          "chunk_id": "71342c9f2c73a2d96d2b",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "*   `loading`: Flag indicating if the load of a dump file is on-going *   `async_loading`: Currently loading replication data-set asynchronously while serving old data. This means `repl-diskless-load` is enabled and set to `swapdb`. Added in Redis 7.0. *   `current_cow_peak`: The peak size in bytes of copy-on-write memory\n     while a child fork is running *   `current_cow_size`: The size in bytes of copy-on-write memory\n     while a child fork is running *   `current_cow_size_age`: The age, in seconds, of the `current_cow_size` value. *   `current_fork_perc`: The percentage of progress of the current fork process. For AOF and RDB forks it is the percentage of `current_save_keys_processed` out of `current_save_keys_total`. *   `current_save_keys_processed`: Number of keys processed by the current save operation *   `current_save_keys_total`: Number of keys at the beginning of the current save operation *   `rdb_changes_since_last_save`: Number of changes since the last dump *   `rdb_bgsave_in_progress`: Flag indicating a RDB save is on-going *   `rdb_last_save_time`: Epoch-based timestamp of last successful RDB save *   `rdb_last_bgsave_status`: Status of the last RDB save operation *   `rdb_last_bgsave_time_sec`: Duration of the last RDB save operation in\n     seconds *   `rdb_current_bgsave_time_sec`: Duration of the on-going RDB save operation\n     if any *   `rdb_last_cow_size`: The size in bytes of copy-on-write memory during\n     the last RDB save operation *   `rdb_last_load_keys_expired`: Number of volatile keys deleted during the last RDB loading. Added in Redis 7.0. *   `rdb_last_load_keys_loaded`: Number of keys loaded during the last RDB loading. Added in Redis 7.0. *   `aof_enabled`: Flag indicating AOF logging is activated *   `aof_rewrite_in_progress`: Flag indicating a AOF rewrite operation is\n     on-going *   `aof_rewrite_scheduled`: Flag indicating an AOF rewrite operation\n     will be scheduled once the on-going RDB save is complete. *   `aof_last_rewrite_time_sec`: Duration of the last AOF rewrite operation in\n     seconds *   `aof_current_rewrite_time_sec`: Duration of the on-going AOF rewrite\n     operation if any *   `aof_last_bgrewrite_status`: Status of the last AOF rewrite operation *   `aof_last_write_status`: Status of the last write operation to the AOF"
+        },
+        {
+          "rank": 5,
+          "score": 0.868505,
+          "chunk_id": "a5badbc295fc1d021c30",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "How I can switch to AOF, if I'm currently using dump.rdb snapshots?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "If you want to enable AOF in a server that is currently using RDB snapshots, you need to convert the data by enabling AOF via CONFIG command on the live server first.\n\n**IMPORTANT:** not following this procedure (e.g. just changing the config and restarting the server) can result in data loss!\n\n**Redis >= 2.2**\n\nPreparations:\n\n* Make a backup of your latest dump.rdb file.\n* Transfer this backup to a safe place.\n\nSwitch to AOF on live database:\n\n* Enable AOF: `redis-cli config set appendonly yes`\n* Optionally disable RDB: `redis-cli config set save \"\"`\n* Make sure writes are appended to the append only file correctly.\n* **IMPORTANT:** Update your `redis.conf` (potentially through `CONFIG REWRITE`) and ensure that it matches the configuration above.\n  If you forget this step, when you restart the server, the configuration changes will be lost and the server will start again with the old configuration, resulting in a loss of your data.\n\nNext time you restart the server:\n\n* Before restarting the server, wait for AOF rewrite to finish persisting the data.\n  You can do that by watching `INFO persistence`, waiting for `aof_rewrite_in_progress` and `aof_rewrite_scheduled` to be `0`, and validating that `aof_last_bgrewrite_status` is `ok`.\n* After restarting the server, check that your database contains the same number of keys it contained previously.\n\n**Redis 2.0**\n\n* Make a backup of your latest dump.rdb file.\n* Transfer this backup into a safe place.\n* Stop all the writes against the database!\n* Issue a `redis-cli BGREWRITEAOF`. This will create the append only file.\n* Stop the server when Redis finished generating the AOF dump.\n* Edit redis.conf end enable append only file persistence.\n* Restart the server.\n* Make sure that your database contains the same number of keys it contained before the switch.\n* Make sure that writes are appended to the append only file correctly."
+        }
+      ]
+    },
+    {
+      "id": "redis-010",
+      "category": "persistence",
+      "question": "Redis 重启时发现 AOF 尾部被截断，默认会怎样处理，旧版本可以用什么工具修复？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "What should I do if my AOF gets truncated?"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "What should I do if my AOF gets truncated?"
+          ]
+        }
+      ],
+      "latency_ms": 10.191,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.862393,
+          "chunk_id": "a5badbc295fc1d021c30",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "How I can switch to AOF, if I'm currently using dump.rdb snapshots?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "If you want to enable AOF in a server that is currently using RDB snapshots, you need to convert the data by enabling AOF via CONFIG command on the live server first.\n\n**IMPORTANT:** not following this procedure (e.g. just changing the config and restarting the server) can result in data loss!\n\n**Redis >= 2.2**\n\nPreparations:\n\n* Make a backup of your latest dump.rdb file.\n* Transfer this backup to a safe place.\n\nSwitch to AOF on live database:\n\n* Enable AOF: `redis-cli config set appendonly yes`\n* Optionally disable RDB: `redis-cli config set save \"\"`\n* Make sure writes are appended to the append only file correctly.\n* **IMPORTANT:** Update your `redis.conf` (potentially through `CONFIG REWRITE`) and ensure that it matches the configuration above.\n  If you forget this step, when you restart the server, the configuration changes will be lost and the server will start again with the old configuration, resulting in a loss of your data.\n\nNext time you restart the server:\n\n* Before restarting the server, wait for AOF rewrite to finish persisting the data.\n  You can do that by watching `INFO persistence`, waiting for `aof_rewrite_in_progress` and `aof_rewrite_scheduled` to be `0`, and validating that `aof_last_bgrewrite_status` is `ok`.\n* After restarting the server, check that your database contains the same number of keys it contained previously.\n\n**Redis 2.0**\n\n* Make a backup of your latest dump.rdb file.\n* Transfer this backup into a safe place.\n* Stop all the writes against the database!\n* Issue a `redis-cli BGREWRITEAOF`. This will create the append only file.\n* Stop the server when Redis finished generating the AOF dump.\n* Edit redis.conf end enable append only file persistence.\n* Restart the server.\n* Make sure that your database contains the same number of keys it contained before the switch.\n* Make sure that writes are appended to the append only file correctly."
+        },
+        {
+          "rank": 2,
+          "score": 0.859081,
+          "chunk_id": "3aa2fdedf2676cf844a0",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "What should I do if my AOF gets corrupted?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "If the AOF file is not just truncated, but corrupted with invalid byte\nsequences in the middle, things are more complex. Redis will complain\nat startup and will abort:\n\n```\n* Reading the remaining AOF tail...\n# Bad file format reading the append only file: make a backup of your AOF file, then use ./redis-check-aof --fix <filename>\n```\n\nThe best thing to do is to run the `redis-check-aof` utility, initially without\nthe `--fix` option, then understand the problem, jump to the given\noffset in the file, and see if it is possible to manually repair the file:\nThe AOF uses the same format of the Redis protocol and is quite simple to fix\nmanually. Otherwise it is possible to let the utility fix the file for us, but\nin that case all the AOF portion from the invalid part to the end of the\nfile may be discarded, leading to a massive amount of data loss if the\ncorruption happened to be in the initial part of the file."
+        },
+        {
+          "rank": 3,
+          "score": 0.85861,
+          "chunk_id": "b5985a2e2954eb6ab8f0",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "What should I do if my AOF gets truncated?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "It is possible the server crashed while writing the AOF file, or the\nvolume where the AOF file is stored was full at the time of writing. When this happens the\nAOF still contains consistent data representing a given point-in-time version\nof the dataset (that may be old up to one second with the default AOF fsync\npolicy), but the last command in the AOF could be truncated.\nThe latest major versions of Redis will be able to load the AOF anyway, just\ndiscarding the last non well formed command in the file. In this case the\nserver will emit a log like the following:\n\n```\n* Reading RDB preamble from AOF file...\n* Reading the remaining AOF tail...\n# !!! Warning: short read while loading the AOF file !!!\n# !!! Truncating the AOF at offset 439 !!!\n# AOF loaded anyway because aof-load-truncated is enabled\n```\n\nYou can change the default configuration to force Redis to stop in such\ncases if you want, but the default configuration is to continue regardless of\nthe fact the last command in the file is not well-formed, in order to guarantee\navailability after a restart.\n\nOlder versions of Redis may not recover, and may require the following steps:\n\n* Make a backup copy of your AOF file.\n* Fix the original file using the `redis-check-aof` tool that ships with Redis:\n\n$ redis-check-aof --fix <filename>\n\n* Optionally use `diff -u` to check what is the difference between two files.\n* Restart the server with the fixed file."
+        },
+        {
+          "rank": 4,
+          "score": 0.857663,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        },
+        {
+          "rank": 5,
+          "score": 0.854095,
+          "chunk_id": "b8e69309dbb6a8678124",
+          "title": "Redis persistence",
+          "section_path": [
+            "Backing up Redis data",
+            "Backing up AOF persistence"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+          "content": "**Note:** If you want to handle the case of the server being restarted during the backup and make sure no rewrite will automatically start after the restart you can change step 1 above to also persist the updated configuration via `CONFIG REWRITE`.\nJust make sure to re-enable automatic rewrites when done (step 4) and persist it with another `CONFIG REWRITE`.\n\nPrior to version 7.0.0 backing up the AOF file can be done simply by copying the aof file (like backing up the RDB snapshot). The file may lack the final part\nbut Redis will still be able to load it (see the previous sections about truncated AOF files)."
+        }
+      ]
+    },
+    {
+      "id": "redis-011",
+      "category": "replication",
+      "question": "Redis 主从复制是同步还是异步的？主节点在副本同步期间还能处理请求吗？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Important facts about Redis replication"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Important facts about Redis replication"
+          ]
+        }
+      ],
+      "latency_ms": 9.732,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.852954,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        },
+        {
+          "rank": 2,
+          "score": 0.848522,
+          "chunk_id": "01c6ce8f481e57fd0e2b",
+          "title": "Redis replication",
+          "section_path": [
+            "Important facts about Redis replication"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "* Redis uses asynchronous replication, with asynchronous replica-to-master acknowledges of the amount of data processed.\n* A master can have multiple replicas.\n* Replicas are able to accept connections from other replicas. Aside from connecting a number of replicas to the same master, replicas can also be connected to other replicas in a cascading-like structure. Since Redis 4.0, all the sub-replicas will receive exactly the same replication stream from the master.\n* Redis replication is non-blocking on the master side. This means that the master will continue to handle queries when one or more replicas perform the initial synchronization or a partial resynchronization.\n* Replication is also largely non-blocking on the replica side. While the replica is performing the initial synchronization, it can handle queries using the old version of the dataset, assuming you configured Redis to do so in redis.conf.  Otherwise, you can configure Redis replicas to return an error to clients if the replication stream is down. However, after the initial sync, the old dataset must be deleted and the new one must be loaded. The replica will block incoming connections during this brief window (that can be as long as many seconds for very large datasets). Since Redis 4.0 you can configure Redis so that the deletion of the old data set happens in a different thread, however loading the new initial dataset will still happen in the main thread and block the replica.\n* Replication can be used both for scalability, to have multiple replicas for read-only queries (for example, slow O(N) operations can be offloaded to replicas), or simply for improving data safety and high availability.\n* You can use replication to avoid the cost of having the master writing the full dataset to disk: a typical technique involves configuring your master `redis.conf` to avoid persisting to disk at all, then connect a replica configured to save from time to time, or with AOF enabled. However, this setup must be handled with care, since a restarting master will start with an empty dataset: if the replica tries to sync with it, the replica will be emptied as well."
+        },
+        {
+          "rank": 3,
+          "score": 0.846795,
+          "chunk_id": "2ef8dc850b1c4dfa09d3",
+          "title": "CLUSTER SLOTS",
+          "section_path": [
+            "Nested Result Array"
+          ],
+          "source_path": "content/commands/cluster-slots.md",
+          "source_url": "https://redis.io/docs/latest/commands/cluster-slots/",
+          "content": "```\n> CLUSTER SLOTS\n1) 1) (integer) 0\n   2) (integer) 5460\n   3) 1) \"127.0.0.1\"\n      2) (integer) 30001\n      3) \"09dbe9720cda62f7865eabc5fd8857c5d2678366\"\n      4) 1) hostname\n         2) \"host-1.redis.example.com\"\n   4) 1) \"127.0.0.1\"\n      2) (integer) 30004\n      3) \"821d8ca00d7ccf931ed3ffc7e3db0599d2271abf\"\n      4) 1) hostname\n         2) \"host-2.redis.example.com\"\n2) 1) (integer) 5461\n   2) (integer) 10922\n   3) 1) \"127.0.0.1\"\n      2) (integer) 30002\n      3) \"c9d93d9f2c0c524ff34cc11838c2003d8c29e013\"\n      4) 1) hostname\n         2) \"host-3.redis.example.com\"\n   4) 1) \"127.0.0.1\"\n      2) (integer) 30005\n      3) \"faadb3eb99009de4ab72ad6b6ed87634c7ee410f\"\n      4) 1) hostname\n         2) \"host-4.redis.example.com\"\n3) 1) (integer) 10923\n   2) (integer) 16383\n   3) 1) \"127.0.0.1\"\n      2) (integer) 30003\n      3) \"044ec91f325b7595e76dbcb18cc688b6a5b434a1\"\n      4) 1) hostname\n         2) \"host-5.redis.example.com\"\n   4) 1) \"127.0.0.1\"\n      2) (integer) 30006\n      3) \"58e6e48d41228013e5d9c1c37c5060693925e97e\"\n      4) 1) hostname\n         2) \"host-6.redis.example.com\"\n```\n\n**Warning:** In future versions there could be more elements describing the node better.\nIn general a client implementation should just rely on the fact that certain parameters are at fixed positions as specified, but more parameters may follow and should be ignored.\nSimilarly a client library should try if possible to cope with the fact that older versions may just have the primary endpoint and port parameter."
+        },
+        {
+          "rank": 4,
+          "score": 0.846707,
+          "chunk_id": "12dde76b52021db36ede",
+          "title": "Scale with Redis Cluster",
+          "section_path": [
+            "Create and use a Redis Cluster",
+            "Add a new node"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+          "content": "Now we can connect to the new node to see if it really joined the cluster:\n\n```\nredis 127.0.0.1:7006> cluster nodes\n3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 127.0.0.1:7001 master - 0 1385543178575 0 connected 5960-10921\n3fc783611028b1707fd65345e763befb36454d73 127.0.0.1:7004 slave 3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 0 1385543179583 0 connected\nf093c80dde814da99c5cf72a7dd01590792b783b :0 myself,master - 0 0 0 connected\n2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385543178072 3 connected\na211e242fc6b22a9427fed61285e85892fa04e08 127.0.0.1:7003 slave 97a3a64667477371c4479320d683e4c8db5858b1 0 1385543178575 0 connected\n97a3a64667477371c4479320d683e4c8db5858b1 127.0.0.1:7000 master - 0 1385543179080 0 connected 0-5959 10922-11422\n3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7005 master - 0 1385543177568 3 connected 11423-16383\n```\n\nNote that since this node is already connected to the cluster it is already\nable to redirect client queries correctly and is generally speaking part of\nthe cluster. However it has two peculiarities compared to the other masters:\n\n* It holds no data as it has no assigned hash slots.\n* Because it is a master without assigned slots, it does not participate in the election process when a replica wants to become a master.\n\nNow it is possible to assign hash slots to this node using the resharding\nfeature of `redis-cli`.\nIt is basically useless to show this as we already\ndid in a previous section, there is no difference, it is just a resharding\nhaving as a target the empty node."
+        },
+        {
+          "rank": 5,
+          "score": 0.846674,
+          "chunk_id": "4e7774639e1d4c2cd8b6",
+          "title": "Redis replication",
+          "section_path": [
+            "Redis replication"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "Redis uses by default asynchronous replication, which being low latency and\nhigh performance, is the natural replication mode for the vast majority of Redis\nuse cases. However, Redis replicas asynchronously acknowledge the amount of data\nthey receive periodically with the master. So the master does not wait every time\nfor a command to be processed by the replicas, however it knows, if needed, what\nreplica already processed what command. This allows having optional synchronous replication.\n\nSynchronous replication of certain data can be requested by the clients using\nthe `WAIT` command. However `WAIT` is only able to ensure there are the\nspecified number of acknowledged copies in the other Redis instances, it does not\nturn a set of Redis instances into a CP system with strong consistency: acknowledged\nwrites can still be lost during a failover, depending on the exact configuration\nof the Redis persistence. However, WAIT dramatically reduces the probability of losing a write after a failure event to specific hard-to-trigger failure modes.\n\nYou can check the Redis Sentinel or Redis Cluster documentation for more information\nabout high availability and failover. The rest of this document mainly describes the basic characteristics of Redis basic replication."
+        }
+      ]
+    },
+    {
+      "id": "redis-012",
+      "category": "replication",
+      "question": "如何把一个 Redis replica 提升为 master，同时保留已经复制的数据？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/replicaof.md",
+          "section_path": [
+            "REPLICAOF"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 8.495,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.871144,
+          "chunk_id": "f1dcaad259e872620c07",
+          "title": "Redis replication",
+          "section_path": [
+            "Maxmemory on replicas"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "By default, a replica will ignore `maxmemory` (unless it is promoted to master after a failover or manually).\nIt means that the eviction of keys will be handled by the master, sending the DEL commands to the replica as keys evict in the master side.\n\nThis behavior ensures that masters and replicas stay consistent, which is usually what you want.\nHowever, if your replica is writable, or you want the replica to have a different memory setting, and you are sure all the writes performed to the replica are idempotent, then you may change this default (but be sure to understand what you are doing).\n\nNote that since the replica by default does not evict, it may end up using more memory than what is set via `maxmemory` (since there are certain buffers that may be larger on the replica, or data structures may sometimes take more memory and so forth).\nMake sure you monitor your replicas, and make sure they have enough memory to never hit a real out-of-memory condition before the master hits the configured `maxmemory` setting.\n\nTo change this behavior, you can allow a replica to not ignore the `maxmemory`. The configuration directives to use is:\n\nreplica-ignore-maxmemory no"
+        },
+        {
+          "rank": 2,
+          "score": 0.869121,
+          "chunk_id": "3636c7a96a81be94dba3",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Configuration handling, propagation, and failovers",
+            "Masters reply to replica vote request"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "In the previous section, we discussed how replicas try to get elected. This section explains what happens from the point of view of a master that is requested to vote for a given replica.\n\nMasters receive requests for votes in form of `FAILOVER_AUTH_REQUEST` requests from replicas.\n\nFor a vote to be granted the following conditions need to be met:\n\n1. A master only votes a single time for a given epoch, and refuses to vote for older epochs: every master has a lastVoteEpoch field and will refuse to vote again as long as the `currentEpoch` in the auth request packet is not greater than the lastVoteEpoch. When a master replies positively to a vote request, the lastVoteEpoch is updated accordingly, and safely stored on disk.\n2. A master votes for a replica only if the replica's master is flagged as `FAIL`.\n3. Auth requests with a `currentEpoch` that is less than the master `currentEpoch` are ignored. Because of this the master reply will always have the same `currentEpoch` as the auth request. If the same replica asks again to be voted, incrementing the `currentEpoch`, it is guaranteed that an old delayed reply from the master can not be accepted for the new vote.\n\nExample of the issue caused by not using rule number 3:\n\nMaster `currentEpoch` is 5, lastVoteEpoch is 1 (this may happen after a few failed elections)\n\n* Replica `currentEpoch` is 3.\n* Replica tries to be elected with epoch 4 (3+1), master replies with an ok with `currentEpoch` 5, however the reply is delayed.\n* Replica will try to be elected again, at a later time, with epoch 5 (4+1), the delayed reply reaches the replica with `currentEpoch` 5, and is accepted as valid."
+        },
+        {
+          "rank": 3,
+          "score": 0.868887,
+          "chunk_id": "b37fbe1917fdc8db0582",
+          "title": "Redis replication",
+          "section_path": [
+            "Partial sync after restarts and failovers"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "Since Redis 4.0, when an instance is promoted to master after a failover,\nit will still be able to perform a partial resynchronization with the replicas\nof the old master. To do so, the replica remembers the old replication ID and\noffset of its former master, so can provide part of the backlog to the connecting\nreplicas even if they ask for the old replication ID.\n\nHowever the new replication ID of the promoted replica will be different, since it\nconstitutes a different history of the data set. For example, the master can\nreturn available and can continue accepting writes for some time, so using the\nsame replication ID in the promoted replica would violate the rule that a\nreplication ID and offset pair identifies only a single data set.\n\nMoreover, replicas - when powered off gently and restarted - are able to store\nin the `RDB` file the information needed to resync with their\nmaster. This is useful in case of upgrades. When this is needed, it is better to\nuse the `SHUTDOWN` command in order to perform a `save & quit` operation on the\nreplica.\n\nIt is not possible to partially sync a replica that restarted via the\nAOF file. However the instance may be turned to RDB persistence before shutting\ndown it, than can be restarted, and finally AOF can be enabled again."
+        },
+        {
+          "rank": 4,
+          "score": 0.86819,
+          "chunk_id": "8356f1d0039bb4eddfbc",
+          "title": "Redis replication",
+          "section_path": [
+            "Read-only replica"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "Since Redis 2.6, replicas support a read-only mode that is enabled by default.\nThis behavior is controlled by the `replica-read-only` option in the redis.conf file, and can be enabled and disabled at runtime using `CONFIG SET`.\n\nRead-only replicas will reject all write commands, so that it is not possible to write to a replica because of a mistake. This does not mean that the feature is intended to expose a replica instance to the internet or more generally to a network where untrusted clients exist, because administrative commands like `DEBUG` or `CONFIG` are still enabled. The Security page describes how to secure a Redis instance.\n\nYou may wonder why it is possible to revert the read-only setting\nand have replica instances that can be targeted by write operations.\nThe answer is that writable replicas exist only for historical reasons.\nUsing writable replicas can result in inconsistency between the master and the replica, so it is not recommended to use writable replicas.\nTo understand in which situations this can be a problem, we need to understand how replication works.\nChanges on the master is replicated by propagating regular Redis commands to the replica.\nWhen a key expires on the master, this is propagated as a DEL command.\nIf a key which exists on the master but is deleted, expired or has a different type on the replica compared to the master will react differently to commands like DEL, INCR or RPOP propagated from the master than intended.\nThe propagated command may fail on the replica or result in a different outcome.\nTo minimize the risks (if you insist on using writable replicas) we suggest you follow these recommendations:\n\n* Don't write to keys in a writable replica that are also used on the master.\n  (This can be hard to guarantee if you don't have control over all the clients that write to the master.)\n\n* Don't configure an instance as a writable replica as an intermediary step when upgrading a set of instances in a running system.\n  In general, don't configure an instance as a writable replica if it can ever be promoted to a master if you want to guarantee data consistency."
+        },
+        {
+          "rank": 5,
+          "score": 0.868077,
+          "chunk_id": "aa425b80dd890547c94d",
+          "title": "Redis replication",
+          "section_path": [
+            "Replication ID explained"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "The reason why Redis instances have two replication IDs is because of replicas\nthat are promoted to masters. After a failover, the promoted replica requires\nto still remember what was its past replication ID, because such replication ID\nwas the one of the former master. In this way, when other replicas will sync\nwith the new master, they will try to perform a partial resynchronization using the\nold master replication ID. This will work as expected, because when the replica\nis promoted to master it sets its secondary ID to its main ID, remembering what\nwas the offset when this ID switch happened. Later it will select a new random\nreplication ID, because a new history begins. When handling the new replicas\nconnecting, the master will match their IDs and offsets both with the current\nID and the secondary ID (up to a given offset, for safety). In short this means\nthat after a failover, replicas connecting to the newly promoted master don't have\nto perform a full sync.\n\nIn case you wonder why a replica promoted to master needs to change its\nreplication ID after a failover: it is possible that the old master is still\nworking as a master because of some network partition: retaining the same\nreplication ID would violate the fact that the same ID and same offset of any\ntwo random instances mean they have the same data set."
+        }
+      ]
+    },
+    {
+      "id": "redis-013",
+      "category": "replication",
+      "question": "为什么关闭持久化的 Redis master 不应该在崩溃后自动重启？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ]
+        }
+      ],
+      "latency_ms": 9.21,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.86763,
+          "chunk_id": "f57e790e7aa0241a3978",
+          "title": "Redis replication",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "In setups where Redis replication is used, it is strongly advised to have\npersistence turned on in the master and in the replicas. When this is not possible,\nfor example because of latency concerns due to very slow disks, instances should\nbe configured to **avoid restarting automatically** after a reboot.\n\nTo better understand why masters with persistence turned off configured to\nauto restart are dangerous, check the following failure mode where data\nis wiped from the master and all its replicas:\n\n1. We have a setup with node A acting as master, with persistence turned down, and nodes B and C replicating from node A.\n2. Node A crashes, however it has some auto-restart system, that restarts the process. However since persistence is turned off, the node restarts with an empty data set.\n3. Nodes B and C will replicate from node A, which is empty, so they'll effectively destroy their copy of the data.\n\nWhen Redis Sentinel is used for high availability, also turning off persistence\non the master, together with auto restart of the process, is dangerous. For example the master can restart fast enough for Sentinel to not detect a failure, so that the failure mode described above happens.\n\nEvery time data safety is important, and replication is used with master configured without persistence, auto restart of instances should be disabled."
+        },
+        {
+          "rank": 2,
+          "score": 0.853401,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        },
+        {
+          "rank": 3,
+          "score": 0.851371,
+          "chunk_id": "e2786bb57870e3a33f0c",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Client and Server roles in the Redis cluster protocol",
+            "Write safety"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "The second failure mode is unlikely to happen because master nodes unable to communicate with the majority of the other masters for enough time to be failed over will no longer accept writes, and when the partition is fixed writes are still refused for a small amount of time to allow other nodes to inform about configuration changes. This failure mode also requires that the client's routing table has not yet been updated.\n\nWrites targeting the minority side of a partition have a larger window in which to get lost. For example, Redis Cluster loses a non-trivial number of writes on partitions where there is a minority of masters and at least one or more clients, since all the writes sent to the masters may potentially get lost if the masters are failed over in the majority side.\n\nSpecifically, for a master to be failed over it must be unreachable by the majority of masters for at least `NODE_TIMEOUT`, so if the partition is fixed before that time, no writes are lost. When the partition lasts for more than `NODE_TIMEOUT`, all the writes performed in the minority side up to that point may be lost. However the minority side of a Redis Cluster will start refusing writes as soon as `NODE_TIMEOUT` time has elapsed without contact with the majority, so there is a maximum window after which the minority becomes no longer available. Hence, no writes are accepted or lost after that time."
+        },
+        {
+          "rank": 4,
+          "score": 0.850845,
+          "chunk_id": "3636c7a96a81be94dba3",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Configuration handling, propagation, and failovers",
+            "Masters reply to replica vote request"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "In the previous section, we discussed how replicas try to get elected. This section explains what happens from the point of view of a master that is requested to vote for a given replica.\n\nMasters receive requests for votes in form of `FAILOVER_AUTH_REQUEST` requests from replicas.\n\nFor a vote to be granted the following conditions need to be met:\n\n1. A master only votes a single time for a given epoch, and refuses to vote for older epochs: every master has a lastVoteEpoch field and will refuse to vote again as long as the `currentEpoch` in the auth request packet is not greater than the lastVoteEpoch. When a master replies positively to a vote request, the lastVoteEpoch is updated accordingly, and safely stored on disk.\n2. A master votes for a replica only if the replica's master is flagged as `FAIL`.\n3. Auth requests with a `currentEpoch` that is less than the master `currentEpoch` are ignored. Because of this the master reply will always have the same `currentEpoch` as the auth request. If the same replica asks again to be voted, incrementing the `currentEpoch`, it is guaranteed that an old delayed reply from the master can not be accepted for the new vote.\n\nExample of the issue caused by not using rule number 3:\n\nMaster `currentEpoch` is 5, lastVoteEpoch is 1 (this may happen after a few failed elections)\n\n* Replica `currentEpoch` is 3.\n* Replica tries to be elected with epoch 4 (3+1), master replies with an ok with `currentEpoch` 5, however the reply is delayed.\n* Replica will try to be elected again, at a later time, with epoch 5 (4+1), the delayed reply reaches the replica with `currentEpoch` 5, and is accepted as valid."
+        },
+        {
+          "rank": 5,
+          "score": 0.848445,
+          "chunk_id": "b37fbe1917fdc8db0582",
+          "title": "Redis replication",
+          "section_path": [
+            "Partial sync after restarts and failovers"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+          "content": "Since Redis 4.0, when an instance is promoted to master after a failover,\nit will still be able to perform a partial resynchronization with the replicas\nof the old master. To do so, the replica remembers the old replication ID and\noffset of its former master, so can provide part of the backlog to the connecting\nreplicas even if they ask for the old replication ID.\n\nHowever the new replication ID of the promoted replica will be different, since it\nconstitutes a different history of the data set. For example, the master can\nreturn available and can continue accepting writes for some time, so using the\nsame replication ID in the promoted replica would violate the rule that a\nreplication ID and offset pair identifies only a single data set.\n\nMoreover, replicas - when powered off gently and restarted - are able to store\nin the `RDB` file the information needed to resync with their\nmaster. This is useful in case of upgrades. When this is needed, it is better to\nuse the `SHUTDOWN` command in order to perform a `save & quit` operation on the\nreplica.\n\nIt is not possible to partially sync a replica that restarted via the\nAOF file. However the instance may be turned to RDB persistence before shutting\ndown it, than can be restarted, and finally AOF can be enabled again."
+        }
+      ]
+    },
+    {
+      "id": "redis-014",
+      "category": "sentinel",
+      "question": "Redis Sentinel 的 quorum 与执行 failover 所需的多数派授权有什么区别？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ]
+        }
+      ],
+      "latency_ms": 9.259,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.868604,
+          "chunk_id": "99ed2034a56c907151cb",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel quick start",
+            "Configuring Sentinel"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* The **quorum** is the number of Sentinels that need to agree about the fact the master is not reachable, in order to really mark the master as failing, and eventually start a failover procedure if possible.\n* However **the quorum is only used to detect the failure**. In order to actually perform a failover, one of the Sentinels need to be elected leader for the failover and be authorized to proceed. This only happens with the vote of the **majority of the Sentinel processes**.\n\nSo for example if you have 5 Sentinel processes, and the quorum for a given\nmaster set to the value of 2, this is what happens:\n\n* If two Sentinels agree at the same time about the master being unreachable, one of the two will try to start a failover.\n* If there are at least a total of three Sentinels reachable, the failover will be authorized and will actually start.\n\nIn practical terms this means during failures **Sentinel never starts a failover if the majority of Sentinel processes are unable to talk** (aka no failover in the minority partition)."
+        },
+        {
+          "rank": 2,
+          "score": 0.867505,
+          "chunk_id": "f37eecea8633718ce87d",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "The previous sections showed that every master monitored by Sentinel is associated to a configured **quorum**. It specifies the number of Sentinel processes\nthat need to agree about the unreachability or error condition of the master in\norder to trigger a failover.\n\nHowever, after the failover is triggered, in order for the failover to actually be performed, **at least a majority of Sentinels must authorize the Sentinel to\nfailover**. Sentinel never performs a failover in the partition where a\nminority of Sentinels exist.\n\nLet's try to make things a bit more clear:\n\n* Quorum: the number of Sentinel processes that need to detect an error condition in order for a master to be flagged as **ODOWN**.\n* The failover is triggered by the **ODOWN** state.\n* Once the failover is triggered, the Sentinel trying to failover is required to ask for authorization to a majority of Sentinels (or more than the majority if the quorum is set to a number greater than the majority).\n\nThe difference may seem subtle but is actually quite simple to understand and use.  For example if you have 5 Sentinel instances, and the quorum is set to 2, a failover will be triggered as soon as 2 Sentinels believe that the master is not reachable, however one of the two Sentinels will be able to failover only if it gets authorization at least from 3 Sentinels.\n\nIf instead the quorum is configured to 5, all the Sentinels must agree about the master error condition, and the authorization from all Sentinels is required in order to failover.\n\nThis means that the quorum can be used to tune Sentinel in two ways:\n\n1. If a quorum is set to a value smaller than the majority of Sentinels we deploy, we are basically making Sentinel more sensitive to master failures, triggering a failover as soon as even just a minority of Sentinels is no longer able to talk with the master.\n2. If a quorum is set to a value greater than the majority of Sentinels, we are making Sentinel able to failover only when there are a very large number (larger than majority) of well connected Sentinels which agree about the master being down."
+        },
+        {
+          "rank": 3,
+          "score": 0.859071,
+          "chunk_id": "7562b9bc047fa5ef69f0",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel quick start",
+            "Configuring Sentinel"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "The Redis source distribution contains a file called `sentinel.conf`\nthat is a self-documented example configuration file you can use to\nconfigure Sentinel, however a typical minimal configuration file looks like the\nfollowing:\n\nsentinel monitor mymaster 127.0.0.1 6379 2\n    sentinel down-after-milliseconds mymaster 60000\n    sentinel failover-timeout mymaster 180000\n    sentinel parallel-syncs mymaster 1\n\nsentinel monitor resque 192.168.1.3 6380 4\n    sentinel down-after-milliseconds resque 10000\n    sentinel failover-timeout resque 180000\n    sentinel parallel-syncs resque 5\n\nYou only need to specify the masters to monitor, giving to each separated\nmaster (that may have any number of replicas) a different name. There is no\nneed to specify replicas, which are auto-discovered. Sentinel will update the\nconfiguration automatically with additional information about replicas (in\norder to retain the information in case of restart). The configuration is\nalso rewritten every time a replica is promoted to master during a failover\nand every time a new Sentinel is discovered.\n\nThe example configuration above basically monitors two sets of Redis\ninstances, each composed of a master and an undefined number of replicas.\nOne set of instances is called `mymaster`, and the other `resque`.\n\nThe meaning of the arguments of `sentinel monitor` statements is the following:\n\nsentinel monitor <master-name> <ip> <port> <quorum>\n\nFor the sake of clarity, let's check line by line what the configuration\noptions mean:\n\nThe first line is used to tell Redis to monitor a master called *mymaster*,\nthat is at address 127.0.0.1 and port 6379, with a quorum of 2. Everything\nis pretty obvious but the **quorum** argument:\n\n* The **quorum** is the number of Sentinels that need to agree about the fact the master is not reachable, in order to really mark the master as failing, and eventually start a failover procedure if possible.\n* However **the quorum is only used to detect the failure**. In order to actually perform a failover, one of the Sentinels need to be elected leader for the failover and be authorized to proceed. This only happens with the vote of the **majority of the Sentinel processes**."
+        },
+        {
+          "rank": 4,
+          "score": 0.854615,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        },
+        {
+          "rank": 5,
+          "score": 0.852935,
+          "chunk_id": "8c0fa588656074d12082",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel quick start",
+            "Example Sentinel deployments",
+            "Example 1: just two Sentinels, DON'T DO THIS"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "+----+         +----+\n    | M1 |---------| R1 |\n    | S1 |         | S2 |\n    +----+         +----+\n\nConfiguration: quorum = 1\n\n* In this setup, if the master M1 fails, R1 will be promoted since the two Sentinels can reach agreement about the failure (obviously with quorum set to 1) and can also authorize a failover because the majority is two. So apparently it could superficially work, however check the next points to see why this setup is broken.\n* If the box where M1 is running stops working, also S1 stops working. The Sentinel running in the other box S2 will not be able to authorize a failover, so the system will become not available.\n\nNote that a majority is needed in order to order different failovers, and later propagate the latest configuration to all the Sentinels. Also note that the ability to failover in a single side of the above setup, without any agreement, would be very dangerous:\n\n+----+           +------+\n    | M1 |----//-----| [M1] |\n    | S1 |           | S2   |\n    +----+           +------+\n\nIn the above configuration we created two masters (assuming S2 could failover\nwithout authorization) in a perfectly symmetrical way. Clients may write\nindefinitely to both sides, and there is no way to understand when the\npartition heals what configuration is the right one, in order to prevent\na *permanent split brain condition*.\n\nSo please **deploy at least three Sentinels in three different boxes** always."
+        }
+      ]
+    },
+    {
+      "id": "redis-015",
+      "category": "sentinel",
+      "question": "Sentinel 中 SDOWN 和 ODOWN 分别表示什么？ODOWN 是否适用于 replica？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "latency_ms": 8.918,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.861413,
+          "chunk_id": "86ac209e54102229017d",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "Replica selection and priority"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "When a Sentinel instance is ready to perform a failover, since the master\nis in `ODOWN` state and the Sentinel received the authorization to failover\nfrom the majority of the Sentinel instances known, a suitable replica needs\nto be selected.\n\nThe replica selection process evaluates the following information about replicas:\n\n1. Disconnection time from the master.\n2. Replica priority.\n3. Replication offset processed.\n4. Run ID.\n\nA replica that is found to be disconnected from the master for more than ten\ntimes the configured master timeout (down-after-milliseconds option), plus\nthe time the master is also not available from the point of view of the\nSentinel doing the failover, is considered to be not suitable for the failover\nand is skipped.\n\nIn more rigorous terms, a replica whose the `INFO` output suggests it has been\ndisconnected from the master for more than:\n\n(down-after-milliseconds * 10) + milliseconds_since_master_is_in_SDOWN_state\n\nIs considered to be unreliable and is disregarded entirely.\n\nThe replica selection only considers the replicas that passed the above test,\nand sorts it based on the above criteria, in the following order.\n\n1. The replicas are sorted by `replica-priority` as configured in the `redis.conf` file of the Redis instance. A lower priority will be preferred.\n2. If the priority is the same, the replication offset processed by the replica is checked, and the replica that received more data from the master is selected.\n3. If multiple replicas have the same priority and processed the same data from the master, a further check is performed, selecting the replica with the lexicographically smaller run ID. Having a lower run ID is not a real advantage for a replica, but is useful in order to make the process of replica selection more deterministic, instead of resorting to select a random replica.\n\nIn most cases, `replica-priority` does not need to be set explicitly so all\ninstances will use the same default value. If there is a particular fail-over\npreference, `replica-priority` must be set on all instances, including masters,\nas a master may become a replica at some future point in time - and it will then\nneed the proper `replica-priority` settings."
+        },
+        {
+          "rank": 2,
+          "score": 0.852364,
+          "chunk_id": "ad2a56afe4720fe89543",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "The ODOWN condition **only applies to masters**. For other kind of instances\nSentinel doesn't require to act, so the ODOWN state is never reached for replicas\nand other sentinels, but only SDOWN is.\n\nHowever SDOWN has also semantic implications. For example a replica in SDOWN\nstate is not selected to be promoted by a Sentinel performing a failover.\n\nSentinels and replicas auto discovery\n---\n\nSentinels stay connected with other Sentinels in order to reciprocally\ncheck the availability of each other, and to exchange messages. However you\ndon't need to configure a list of other Sentinel addresses in every Sentinel\ninstance you run, as Sentinel uses the Redis instances Pub/Sub capabilities\nin order to discover the other Sentinels that are monitoring the same masters\nand replicas.\n\nThis feature is implemented by sending *hello messages* into the channel named\n`__sentinel__:hello`.\n\nSimilarly you don't need to configure what is the list of the replicas attached\nto a master, as Sentinel will auto discover this list querying Redis.\n\n* Every Sentinel publishes a message to every monitored master and replica Pub/Sub channel `__sentinel__:hello`, every two seconds, announcing its presence with ip, port, runid.\n* Every Sentinel is subscribed to the Pub/Sub channel `__sentinel__:hello` of every master and replica, looking for unknown sentinels. When new sentinels are detected, they are added as sentinels of this master.\n* Hello messages also include the full current configuration of the master. If the receiving Sentinel has a configuration for a given master which is older than the one received, it updates to the new configuration immediately.\n* Before adding a new sentinel to a master a Sentinel always checks if there is already a sentinel with the same runid or the same address (ip and port pair). In that case all the matching sentinels are removed, and the new added.\n\nSentinel reconfiguration of instances outside the failover procedure\n---\n\nEven when no failover is in progress, Sentinels will always try to set the\ncurrent configuration on monitored instances. Specifically:\n\n* Replicas (according to the current configuration) that claim to be masters, will be configured as replicas to replicate with the current master.\n* Replicas connected to a wrong master, will be reconfigured to replicate with the right master."
+        },
+        {
+          "rank": 3,
+          "score": 0.851667,
+          "chunk_id": "206229c087f54ee2a818",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel API",
+            "Pub/Sub messages"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* **+reset-master** `<instance details>` -- The master was reset. * **+slave** `<instance details>` -- A new replica was detected and attached. * **+failover-state-reconf-slaves** `<instance details>` -- Failover state changed to `reconf-slaves` state. * **+failover-detected** `<instance details>` -- A failover started by another Sentinel or any other external entity was detected (An attached replica turned into a master). * **+slave-reconf-sent** `<instance details>` -- The leader sentinel sent the `REPLICAOF` command to this instance in order to reconfigure it for the new replica. * **+slave-reconf-inprog** `<instance details>` -- The replica being reconfigured showed to be a replica of the new master ip:port pair, but the synchronization process is not yet complete. * **+slave-reconf-done** `<instance details>` -- The replica is now synchronized with the new master. * **-dup-sentinel** `<instance details>` -- One or more sentinels for the specified master were removed as duplicated (this happens for instance when a Sentinel instance is restarted). * **+sentinel** `<instance details>` -- A new sentinel for this master was detected and attached. * **+sdown** `<instance details>` -- The specified instance is now in Subjectively Down state. * **-sdown** `<instance details>` -- The specified instance is no longer in Subjectively Down state. * **+odown** `<instance details>` -- The specified instance is now in Objectively Down state. * **-odown** `<instance details>` -- The specified instance is no longer in Objectively Down state. * **+new-epoch** `<instance details>` -- The current epoch was updated."
+        },
+        {
+          "rank": 4,
+          "score": 0.850784,
+          "chunk_id": "f3d2d6a69d77cce92b76",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "Redis Sentinel has two different concepts of *being down*, one is called\na *Subjectively Down* condition (SDOWN) and is a down condition that is\nlocal to a given Sentinel instance. Another is called *Objectively Down*\ncondition (ODOWN) and is reached when enough Sentinels (at least the\nnumber configured as the `quorum` parameter of the monitored master) have\nan SDOWN condition, and get feedback from other Sentinels using\nthe `SENTINEL is-master-down-by-addr` command.\n\nFrom the point of view of a Sentinel an SDOWN condition is reached when it\ndoes not receive a valid reply to PING requests for the number of seconds\nspecified in the configuration as `is-master-down-after-milliseconds`\nparameter.\n\nAn acceptable reply to PING is one of the following:\n\n* PING replied with +PONG.\n* PING replied with -LOADING error.\n* PING replied with -MASTERDOWN error.\n\nAny other reply (or no reply at all) is considered non valid.\nHowever note that **a logical master that advertises itself as a replica in\nthe INFO output is considered to be down**.\n\nNote that SDOWN requires that no acceptable reply is received for the whole\ninterval configured, so for instance if the interval is 30000 milliseconds\n(30 seconds) and we receive an acceptable ping reply every 29 seconds, the\ninstance is considered to be working.\n\nSDOWN is not enough to trigger a failover: it only means a single Sentinel\nbelieves a Redis instance is not available. To trigger a failover, the\nODOWN state must be reached.\n\nTo switch from SDOWN to ODOWN no strong consensus algorithm is used, but\njust a form of gossip: if a given Sentinel gets reports that a master\nis not working from enough Sentinels **in a given time range**, the SDOWN is\npromoted to ODOWN. If this acknowledge is later missing, the flag is cleared.\n\nA more strict authorization that uses an actual majority is required in\norder to really start the failover, but no failover can be triggered without\nreaching the ODOWN state.\n\nThe ODOWN condition **only applies to masters**. For other kind of instances\nSentinel doesn't require to act, so the ODOWN state is never reached for replicas\nand other sentinels, but only SDOWN is."
+        },
+        {
+          "rank": 5,
+          "score": 0.850092,
+          "chunk_id": "96eb664361c2cace7482",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "* Replicas (according to the current configuration) that claim to be masters, will be configured as replicas to replicate with the current master.\n* Replicas connected to a wrong master, will be reconfigured to replicate with the right master.\n\nFor Sentinels to reconfigure replicas, the wrong configuration must be observed for some time, that is greater than the period used to broadcast new configurations.\n\nThis prevents Sentinels with a stale configuration (for example because they just rejoined from a partition) will try to change the replicas configuration before receiving an update.\n\nAlso note how the semantics of always trying to impose the current configuration makes the failover more resistant to partitions:\n\n* Masters failed over are reconfigured as replicas when they return available.\n* Replicas partitioned away during a partition are reconfigured once reachable.\n\nThe important lesson to remember about this section is: **Sentinel is a system where each process will always try to impose the last logical configuration to the set of monitored instances**."
+        }
+      ]
+    },
+    {
+      "id": "redis-016",
+      "category": "cluster",
+      "question": "Redis Cluster 客户端收到 MOVED 错误后应如何处理，是否应该更新本地槽位映射？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ]
+        }
+      ],
+      "latency_ms": 9.702,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.869948,
+          "chunk_id": "769088319a368e9a38f5",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "The client is not required to, but should try to memorize that hash slot\n3999 is served by 127.0.0.1:6381. This way once a new command needs to\nbe issued it can compute the hash slot of the target key and have a\ngreater chance of choosing the right node.\n\nAn alternative is to just refresh the whole client-side cluster layout\nusing the `CLUSTER SHARDS`, or the deprecated `CLUSTER SLOTS`, command\nwhen a MOVED redirection is received. When a redirection is encountered, it\nis likely multiple slots were reconfigured rather than just one, so updating\nthe client configuration as soon as possible is often the best strategy.\n\nNote that when the Cluster is stable (no ongoing changes in the configuration),\neventually all the clients will obtain a map of hash slots -> nodes, making\nthe cluster efficient, with clients directly addressing the right nodes\nwithout redirections, proxies or other single point of failure entities.\n\nA client **must be also able to handle -ASK redirections** that are described\nlater in this document, otherwise it is not a complete Redis Cluster client."
+        },
+        {
+          "rank": 2,
+          "score": 0.866266,
+          "chunk_id": "b653fefd6bfb02d5f318",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "A Redis client is free to send queries to every node in the cluster, including\nreplica nodes. The node will analyze the query, and if it is acceptable\n(that is, only a single key is mentioned in the query, or the multiple keys\nmentioned are all to the same hash slot) it will lookup what\nnode is responsible for the hash slot where the key or keys belong.\n\nIf the hash slot is served by the node, the query is simply processed, otherwise\nthe node will check its internal hash slot to node map, and will reply\nto the client with a MOVED error, like in the following example:\n\nGET x\n    -MOVED 3999 127.0.0.1:6381\n\nThe error includes the hash slot of the key (3999) and the endpoint:port of the instance that can serve the query.\nThe client needs to reissue the query to the specified node's endpoint address and port.\nThe endpoint can be either an IP address, a hostname, or it can be empty (e.g. `-MOVED 3999 :6380`).\nAn empty endpoint indicates that the server node has an unknown endpoint, and the client should send the next request to the same endpoint as the current request but with the provided port.\n\nNote that even if the client waits a long time before reissuing the query,\nand in the meantime the cluster configuration changed, the destination node\nwill reply again with a MOVED error if the hash slot 3999 is now served by\nanother node. The same happens if the contacted node had no updated information.\n\nSo while from the point of view of the cluster nodes are identified by\nIDs we try to simplify our interface with the client just exposing a map\nbetween hash slots and Redis nodes identified by endpoint:port pairs.\n\nThe client is not required to, but should try to memorize that hash slot\n3999 is served by 127.0.0.1:6381. This way once a new command needs to\nbe issued it can compute the hash slot of the target key and have a\ngreater chance of choosing the right node."
+        },
+        {
+          "rank": 3,
+          "score": 0.863404,
+          "chunk_id": "6447bf137d531b7e3833",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "Client connections and redirection handling"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "To be efficient, Redis Cluster clients maintain a map of the current slot\nconfiguration. However, this configuration is not *required* to be up to date.\nWhen contacting the wrong node results in a redirection, the client\ncan update its internal slot map accordingly.\n\nClients usually need to fetch a complete list of slots and mapped node\naddresses in two different situations:\n\n* At startup, to populate the initial slots configuration\n* When the client receives a `MOVED` redirection\n\nNote that a client may handle the `MOVED` redirection by updating just the\nmoved slot in its table; however this is usually not efficient because often\nthe configuration of multiple slots will be modified at once. For example, if a\nreplica is promoted to master, all of the slots served by the old master will\nbe remapped). It is much simpler to react to a `MOVED` redirection by\nfetching the full map of slots to nodes from scratch.\n\nClient can issue a `CLUSTER SLOTS` command to retrieve an array of slot\nranges and the associated master and replica nodes serving the specified ranges.\n\nThe following is an example of output of `CLUSTER SLOTS`:\n\n```\n127.0.0.1:7000> cluster slots\n1) 1) (integer) 5461\n   2) (integer) 10922\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7001\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7004\n2) 1) (integer) 0\n   2) (integer) 5460\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7000\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7003\n3) 1) (integer) 10923\n   2) (integer) 16383\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7002\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7005\n```"
+        },
+        {
+          "rank": 4,
+          "score": 0.853715,
+          "chunk_id": "a23113d6362723ae6504",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "ASK redirection"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "In the previous section, we briefly talked about ASK redirection. Why can't\nwe simply use MOVED redirection? Because while MOVED means that\nwe think the hash slot is permanently served by a different node and the\nnext queries should be tried against the specified node. ASK means to\nsend only the next query to the specified node.\n\nThis is needed because the next query about hash slot 8 can be about a\nkey that is still in A, so we always want the client to try A and\nthen B if needed. Since this happens only for one hash slot out of 16384\navailable, the performance hit on the cluster is acceptable.\n\nWe need to force that client behavior, so to make sure\nthat clients will only try node B after A was tried, node B will only\naccept queries of a slot that is set as IMPORTING if the client sends the\nASKING command before sending the query.\n\nBasically the ASKING command sets a one-time flag on the client that forces\na node to serve a query about an IMPORTING slot.\n\nThe full semantics of ASK redirection from the point of view of the client is as follows:\n\n* If ASK redirection is received, send only the query that was redirected to the specified node but continue sending subsequent queries to the old node.\n* Start the redirected query with the ASKING command.\n* Don't yet update local client tables to map hash slot 8 to B.\n\nOnce hash slot 8 migration is completed, A will send a MOVED message and\nthe client may permanently map hash slot 8 to the new endpoint and port pair.\nNote that if a buggy client performs the map earlier this is not\na problem since it will not send the ASKING command before issuing the query,\nso B will redirect the client to A using a MOVED redirection error.\n\nSlots migration is explained in similar terms but with different wording\n(for the sake of redundancy in the documentation) in the `CLUSTER SETSLOT`\ncommand documentation."
+        },
+        {
+          "rank": 5,
+          "score": 0.847964,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        }
+      ]
+    },
+    {
+      "id": "redis-017",
+      "category": "cluster",
+      "question": "Redis Cluster 为什么可能丢失已经向客户端确认的写入？",
+      "recall_at_5": 0.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "section_path": [
+            "Redis Cluster 101",
+            "Redis Cluster consistency guarantees"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "latency_ms": 8.956,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.864862,
+          "chunk_id": "cf2f2e1c73f93575b76f",
+          "title": "Scale with Redis Cluster",
+          "section_path": [
+            "Create and use a Redis Cluster",
+            "Test the failover"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+          "content": "```\n18849 R (0 err) | 18849 W (0 err) |\n23151 R (0 err) | 23151 W (0 err) |\n27302 R (0 err) | 27302 W (0 err) |\n\n... many error warnings here ...\n\n29659 R (578 err) | 29660 W (577 err) |\n33749 R (578 err) | 33750 W (577 err) |\n37918 R (578 err) | 37919 W (577 err) |\n42077 R (578 err) | 42078 W (577 err) |\n```\n\nAs you can see during the failover the system was not able to accept 578 reads and 577 writes, however no inconsistency was created in the database. This may\nsound unexpected as in the first part of this tutorial we stated that Redis\nCluster can lose writes during the failover because it uses asynchronous\nreplication. What we did not say is that this is not very likely to happen\nbecause Redis sends the reply to the client, and the commands to replicate\nto the replicas, about at the same time, so there is a very small window to\nlose data. However the fact that it is hard to trigger does not mean that it\nis impossible, so this does not change the consistency guarantees provided\nby Redis cluster.\n\nWe can now check what is the cluster setup after the failover (note that\nin the meantime I restarted the crashed instance so that it rejoins the\ncluster as a replica):\n\n```\n$ redis-cli -p 7000 cluster nodes\n3fc783611028b1707fd65345e763befb36454d73 127.0.0.1:7004 slave 3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 0 1385503418521 0 connected\na211e242fc6b22a9427fed61285e85892fa04e08 127.0.0.1:7003 slave 97a3a64667477371c4479320d683e4c8db5858b1 0 1385503419023 0 connected\n97a3a64667477371c4479320d683e4c8db5858b1 :0 myself,master - 0 0 0 connected 0-5959 10922-11422\n3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7005 master - 0 1385503419023 3 connected 11423-16383\n3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 127.0.0.1:7001 master - 0 1385503417005 0 connected 5960-10921\n2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385503418016 3 connected\n```\n\nNow the masters are running on ports 7000, 7001 and 7005. What was previously\na master, that is the Redis instance running on port 7002, is now a replica of\n7005."
+        },
+        {
+          "rank": 2,
+          "score": 0.860398,
+          "chunk_id": "e2786bb57870e3a33f0c",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Client and Server roles in the Redis cluster protocol",
+            "Write safety"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "The second failure mode is unlikely to happen because master nodes unable to communicate with the majority of the other masters for enough time to be failed over will no longer accept writes, and when the partition is fixed writes are still refused for a small amount of time to allow other nodes to inform about configuration changes. This failure mode also requires that the client's routing table has not yet been updated.\n\nWrites targeting the minority side of a partition have a larger window in which to get lost. For example, Redis Cluster loses a non-trivial number of writes on partitions where there is a minority of masters and at least one or more clients, since all the writes sent to the masters may potentially get lost if the masters are failed over in the majority side.\n\nSpecifically, for a master to be failed over it must be unreachable by the majority of masters for at least `NODE_TIMEOUT`, so if the partition is fixed before that time, no writes are lost. When the partition lasts for more than `NODE_TIMEOUT`, all the writes performed in the minority side up to that point may be lost. However the minority side of a Redis Cluster will start refusing writes as soon as `NODE_TIMEOUT` time has elapsed without contact with the majority, so there is a maximum window after which the minority becomes no longer available. Hence, no writes are accepted or lost after that time."
+        },
+        {
+          "rank": 3,
+          "score": 0.859613,
+          "chunk_id": "9075b4383497322bc01f",
+          "title": "CLUSTER SLOTS",
+          "section_path": [
+            "CLUSTER SLOTS"
+          ],
+          "source_path": "content/commands/cluster-slots.md",
+          "source_url": "https://redis.io/docs/latest/commands/cluster-slots/",
+          "content": "`CLUSTER SLOTS` returns details about which cluster slots map to which Redis instances.\nThe command is suitable to be used by Redis Cluster client libraries implementations in order to retrieve (or update when a redirection is received) the map associating cluster *hash slots* with actual nodes network information, so that when a command is received, it can be sent to what is likely the right instance for the keys specified in the command.\n\nThe networking information for each node is an array containing the following elements:\n\n* Preferred endpoint (Either an IP address, hostname, or NULL)\n* Port number\n* The node ID\n* A map of additional networking metadata\n\nThe preferred endpoint, along with the port, defines the location that clients should use to send requests for a given slot.\nA NULL value for the endpoint indicates the node has an unknown endpoint and the client should connect to the same endpoint it used to send the `CLUSTER SLOTS` command but with the port returned from the command.\nThis unknown endpoint configuration is useful when the Redis nodes are behind a load balancer that Redis doesn't know the endpoint of.\nWhich endpoint is set as preferred is determined by the `cluster-preferred-endpoint-type` config.\nAn empty string `\"\"` is another abnormal value of the endpoint field, as well as for the ip field, which is returned if the node doesn't know its own IP address.\nThis can happen in a cluster that consists of only one node or the node has not yet been joined with the rest of the cluster.\nThe value `?` is displayed if the node is incorrectly configured to use announced hostnames but no hostname is configured using `cluster-announce-hostname`.\nClients may treat the empty string in the same way as NULL, that is the same endpoint it used to send the current command to, while `\"?\"` should be treated as an unknown node, not necessarily the same node as the one serving the current command.\n\nAdditional networking metadata is provided as a map on the fourth argument for each node.\nThe following networking metadata may be returned:\n\n* IP: When the preferred endpoint is not set to IP.\n* Hostname: When a node has an announced hostname but the primary endpoint is not set to hostname."
+        },
+        {
+          "rank": 4,
+          "score": 0.859499,
+          "chunk_id": "6447bf137d531b7e3833",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "Client connections and redirection handling"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "To be efficient, Redis Cluster clients maintain a map of the current slot\nconfiguration. However, this configuration is not *required* to be up to date.\nWhen contacting the wrong node results in a redirection, the client\ncan update its internal slot map accordingly.\n\nClients usually need to fetch a complete list of slots and mapped node\naddresses in two different situations:\n\n* At startup, to populate the initial slots configuration\n* When the client receives a `MOVED` redirection\n\nNote that a client may handle the `MOVED` redirection by updating just the\nmoved slot in its table; however this is usually not efficient because often\nthe configuration of multiple slots will be modified at once. For example, if a\nreplica is promoted to master, all of the slots served by the old master will\nbe remapped). It is much simpler to react to a `MOVED` redirection by\nfetching the full map of slots to nodes from scratch.\n\nClient can issue a `CLUSTER SLOTS` command to retrieve an array of slot\nranges and the associated master and replica nodes serving the specified ranges.\n\nThe following is an example of output of `CLUSTER SLOTS`:\n\n```\n127.0.0.1:7000> cluster slots\n1) 1) (integer) 5461\n   2) (integer) 10922\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7001\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7004\n2) 1) (integer) 0\n   2) (integer) 5460\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7000\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7003\n3) 1) (integer) 10923\n   2) (integer) 16383\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7002\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7005\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.859047,
+          "chunk_id": "b40a05fc70f46dcbef34",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "Client connections and redirection handling"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+          "content": "```\n127.0.0.1:7000> cluster slots\n1) 1) (integer) 5461\n   2) (integer) 10922\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7001\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7004\n2) 1) (integer) 0\n   2) (integer) 5460\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7000\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7003\n3) 1) (integer) 10923\n   2) (integer) 16383\n   3) 1) \"127.0.0.1\"\n      2) (integer) 7002\n   4) 1) \"127.0.0.1\"\n      2) (integer) 7005\n```\n\nThe first two sub-elements of every element of the returned array are the\nstart and end slots of the range. The additional elements represent address-port\npairs. The first address-port pair is the master serving the slot, and the\nadditional address-port pairs are the replicas serving the same slot. Replicas\nwill be listed only when not in an error condition (i.e., when their FAIL flag is not set).\n\nThe first element in the output above says that slots from 5461 to 10922\n(start and end included) are served by 127.0.0.1:7001, and it is possible\nto scale read-only load contacting the replica at 127.0.0.1:7004.\n\n`CLUSTER SLOTS` is not guaranteed to return ranges that cover the full\n16384 slots if the cluster is misconfigured, so clients should initialize the\nslots configuration map filling the target nodes with NULL objects, and\nreport an error if the user tries to execute commands about keys\nthat belong to unassigned slots.\n\nBefore returning an error to the caller when a slot is found to\nbe unassigned, the client should try to fetch the slots configuration\nagain to check if the cluster is now configured properly."
+        }
+      ]
+    },
+    {
+      "id": "redis-018",
+      "category": "security",
+      "question": "Redis 使用默认配置、未设置密码并监听所有接口时，protected mode 会怎样限制连接？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "section_path": [
+            "Protected mode"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "section_path": [
+            "Protected mode"
+          ]
+        }
+      ],
+      "latency_ms": 10.423,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.87327,
+          "chunk_id": "251a0a2c0809c2f22487",
+          "title": "Redis security",
+          "section_path": [
+            "Protected mode"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/",
+          "content": "Unfortunately, many users fail to protect Redis instances from being accessed\nfrom external networks. Many instances are simply left exposed on the\ninternet with public IPs. Since version 3.2.0, Redis enters a special mode called **protected mode** when it is\nexecuted with the default configuration (binding all the interfaces) and\nwithout any password in order to access it. In this mode, Redis only replies to queries from the\nloopback interfaces, and replies to clients connecting from other\naddresses with an error that explains the problem and how to configure\nRedis properly.\n\nWe expect protected mode to seriously decrease the security issues caused\nby unprotected Redis instances executed without proper administration. However,\nthe system administrator can still ignore the error given by Redis and\ndisable protected mode or manually bind all the interfaces."
+        },
+        {
+          "rank": 2,
+          "score": 0.854779,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 3,
+          "score": 0.84971,
+          "chunk_id": "834de1b69b992fdc829f",
+          "title": "ACL",
+          "section_path": [
+            "ACL rules"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/acl.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/",
+          "content": "*Note: if a user is not flagged with nopass and has no list of valid passwords, that user is effectively impossible to use because there will be no way to log in as that user.*\n\nConfigure selectors for the user:\n\n* `(<rule list>)`: (Available in Redis 7.0 and later) Create a new selector to match rules against. Selectors are evaluated after the user permissions, and are evaluated according to the order they are defined. If a command matches either the user permissions or any selector, it is allowed. See selectors for more information.\n* `clearselectors`: (Available in Redis 7.0 and later) Delete all of the selectors attached to the user.\n\nReset the user:\n\n* `reset` Performs the following actions: resetpass, resetkeys, resetchannels, allchannels (if acl-pubsub-default is set), off, clearselectors, -@all. The user returns to the same state it had immediately after its creation."
+        },
+        {
+          "rank": 4,
+          "score": 0.848974,
+          "chunk_id": "729ba8cde6265d8eab4e",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Redis Access Control List authentication",
+            "Sentinel Access Control List authentication"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+          "content": "The first step in securing a Sentinel instance with ACL is preventing any unauthorized access to it. To do that, you'll need to disable the default superuser (or at the very least set it up with a strong password) and create a new one and allow it access to Pub/Sub channels:\n\n127.0.0.1:5000> ACL SETUSER admin ON >admin-password allchannels +@all\n    OK\n    127.0.0.1:5000> ACL SETUSER default off\n    OK\n\nThe default user is used by Sentinel to connect to other instances. You can provide the credentials of another superuser with the following configuration directives:\n\nsentinel sentinel-user <username>\n    sentinel sentinel-pass <password>\n\nWhere `<username>` and `<password>` are the Sentinel's superuser and password, respectively (e.g. `admin` and `admin-password` in the example above).\n\nLastly, for authenticating incoming client connections, you can create a Sentinel restricted user profile such as the following:\n\n127.0.0.1:5000> ACL SETUSER sentinel-user ON >user-password -@all +auth +client|getname +client|id +client|setname +command +hello +ping +role +sentinel|get-master-addr-by-name +sentinel|master +sentinel|myid +sentinel|replicas +sentinel|sentinels +sentinel|masters\n\nRefer to the documentation of your Sentinel client of choice for further information."
+        },
+        {
+          "rank": 5,
+          "score": 0.846926,
+          "chunk_id": "0553ae39b42ae7ecc897",
+          "title": "ACL",
+          "section_path": [
+            "Create and edit user ACLs with the ACL SETUSER command"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/acl.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/",
+          "content": "New users are created with restrictive permissions by default. Starting with Redis 6.2, ACL provides Pub/Sub channels access management as well. To ensure backward compatibility with version 6.0 when upgrading to Redis 6.2, new users are granted the 'allchannels' permission by default. The default can be set to `resetchannels` via the `acl-pubsub-default` configuration directive.\n\nFrom 7.0, The `acl-pubsub-default` value is set to `resetchannels` to restrict the channels access by default to provide better security.\nThe default can be set to `allchannels` via the `acl-pubsub-default` configuration directive to be compatible with previous versions.\n\nSuch user is completely useless. Let's try to define the user so that\nit is active, has a password, and can access with only the `GET` command\nto key names starting with the string \"cached:\".\n\n> ACL SETUSER alice on >p1pp0 ~cached:* +get\n    OK\n\nNow the user can do something, but will refuse to do other things:\n\n> AUTH alice p1pp0\n    OK\n    > GET foo\n    (error) NOPERM this user has no permissions to access one of the keys used as arguments\n    > GET cached:1234\n    (nil)\n    > SET cached:1234 zap\n    (error) NOPERM this user has no permissions to run the 'set' command\n\nThings are working as expected. In order to inspect the configuration of the\nuser alice (remember that user names are case sensitive), it is possible to\nuse an alternative to `ACL LIST` which is designed to be more suitable for\ncomputers to read, while `ACL GETUSER` is more human readable.\n\n> ACL GETUSER alice\n    1) \"flags\"\n    2) 1) \"on\"\n    3) \"passwords\"\n    4) 1) \"2d9c75...\"\n    5) \"commands\"\n    6) \"-@all +get\"\n    7) \"keys\"\n    8) \"~cached:*\"\n    9) \"channels\"\n    10) \"\"\n    11) \"selectors\"\n    12) (empty array)"
+        }
+      ]
+    },
+    {
+      "id": "redis-019",
+      "category": "security",
+      "question": "如何查看最近因为认证失败、命令、key 或 Pub/Sub channel 权限而被拒绝的 ACL 事件？",
+      "recall_at_5": 1.0,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/acl-log.md",
+          "section_path": [
+            "ACL LOG"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/acl-log.md",
+          "section_path": [
+            "ACL LOG"
+          ]
+        }
+      ],
+      "latency_ms": 10.545,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.879443,
+          "chunk_id": "1997092e27f9622e70ab",
+          "title": "ACL LOG",
+          "section_path": [
+            "ACL LOG"
+          ],
+          "source_path": "content/commands/acl-log.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-log/",
+          "content": "The command shows a list of recent ACL security events:\n\n1. Failed authentications with `AUTH` or `HELLO` (reason = auth)\n2. Commands violating the current ACL rules\n   - Disallowed commands (reason = command).\n   - Disallowed keys (reason = key).\n   - Disallowed pub/sub channel (reason = channel).\n\nThe optional argument specifies how many entries to show. By default\nup to ten failures are returned. The special `RESET` argument clears the log.\nEntries are displayed starting from the most recent."
+        },
+        {
+          "rank": 2,
+          "score": 0.871915,
+          "chunk_id": "231c20a936a958d07dfb",
+          "title": "ACL LOG",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/acl-log.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-log/",
+          "content": "```\n> AUTH someuser wrongpassword\n(error) WRONGPASS invalid username-password pair\n> ACL LOG 1\n1)  1) \"count\"\n    2) (integer) 1\n    3) \"reason\"\n    4) \"auth\"\n    5) \"context\"\n    6) \"toplevel\"\n    7) \"object\"\n    8) \"AUTH\"\n    9) \"username\"\n   10) \"someuser\"\n   11) \"age-seconds\"\n   12) \"8.038\"\n   13) \"client-info\"\n   14) \"id=3 addr=127.0.0.1:57275 laddr=127.0.0.1:6379 fd=8 name= age=16 idle=0 flags=N db=0 sub=0 psub=0 ssub=0 multi=-1 qbuf=48 qbuf-free=16842 argv-mem=25 multi-mem=0 rbs=1024 rbp=0 obl=0 oll=0 omem=0 tot-mem=18737 events=r cmd=auth user=default redir=-1 resp=2\"\n   15) \"entry-id\"\n   16) (integer) 0\n   17) \"timestamp-created\"\n   18) (integer) 1675361492408\n   19) \"timestamp-last-updated\"\n   20) (integer) 1675361492408\n```"
+        },
+        {
+          "rank": 3,
+          "score": 0.867874,
+          "chunk_id": "0553ae39b42ae7ecc897",
+          "title": "ACL",
+          "section_path": [
+            "Create and edit user ACLs with the ACL SETUSER command"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/acl.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/",
+          "content": "New users are created with restrictive permissions by default. Starting with Redis 6.2, ACL provides Pub/Sub channels access management as well. To ensure backward compatibility with version 6.0 when upgrading to Redis 6.2, new users are granted the 'allchannels' permission by default. The default can be set to `resetchannels` via the `acl-pubsub-default` configuration directive.\n\nFrom 7.0, The `acl-pubsub-default` value is set to `resetchannels` to restrict the channels access by default to provide better security.\nThe default can be set to `allchannels` via the `acl-pubsub-default` configuration directive to be compatible with previous versions.\n\nSuch user is completely useless. Let's try to define the user so that\nit is active, has a password, and can access with only the `GET` command\nto key names starting with the string \"cached:\".\n\n> ACL SETUSER alice on >p1pp0 ~cached:* +get\n    OK\n\nNow the user can do something, but will refuse to do other things:\n\n> AUTH alice p1pp0\n    OK\n    > GET foo\n    (error) NOPERM this user has no permissions to access one of the keys used as arguments\n    > GET cached:1234\n    (nil)\n    > SET cached:1234 zap\n    (error) NOPERM this user has no permissions to run the 'set' command\n\nThings are working as expected. In order to inspect the configuration of the\nuser alice (remember that user names are case sensitive), it is possible to\nuse an alternative to `ACL LIST` which is designed to be more suitable for\ncomputers to read, while `ACL GETUSER` is more human readable.\n\n> ACL GETUSER alice\n    1) \"flags\"\n    2) 1) \"on\"\n    3) \"passwords\"\n    4) 1) \"2d9c75...\"\n    5) \"commands\"\n    6) \"-@all +get\"\n    7) \"keys\"\n    8) \"~cached:*\"\n    9) \"channels\"\n    10) \"\"\n    11) \"selectors\"\n    12) (empty array)"
+        },
+        {
+          "rank": 4,
+          "score": 0.860629,
+          "chunk_id": "5fc860c4b5485d21abd5",
+          "title": "ACL LIST",
+          "section_path": [
+            "Examples"
+          ],
+          "source_path": "content/commands/acl-list.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-list/",
+          "content": "```\n> ACL LIST\n1) \"user antirez on #9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08 ~objects:* &* +@all -@admin -@dangerous\"\n2) \"user default on nopass ~* &* +@all\"\n```\n\nIn some cases, you might see `allchannels` instead of `&*` and `allkeys` instead of `~*` in the output. This is because `allchannels` and `allkeys` are aliases for `&*` and `~*` respectively."
+        },
+        {
+          "rank": 5,
+          "score": 0.85955,
+          "chunk_id": "b983861ede238533786c",
+          "title": "ACL",
+          "section_path": [
+            "ACL rules"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/acl.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/",
+          "content": "Allow and disallow certain keys and key permissions:\n\n* `~<pattern>`: Add a pattern of keys that can be mentioned as part of commands. For instance `~*` allows all the keys. The pattern is a glob-style pattern like the one of `KEYS`. It is possible to specify multiple patterns.\n* `%R~<pattern>`: (Available in Redis 7.0 and later) Add the specified read key pattern. This behaves similar to the regular key pattern but only grants permission to read from keys that match the given pattern. See key permissions for more information.\n* `%W~<pattern>`: (Available in Redis 7.0 and later) Add the specified write key pattern. This behaves similar to the regular key pattern but only grants permission to write to keys that match the given pattern. See key permissions for more information.\n* `%RW~<pattern>`: (Available in Redis 7.0 and later) Alias for `~<pattern>`.\n* `allkeys`: Alias for `~*`.\n* `resetkeys`: Flush the list of allowed keys patterns. For instance the ACL `~foo:* ~bar:* resetkeys ~objects:*`, will only allow the client to access keys that match the pattern `objects:*`.\n\nAllow and disallow Pub/Sub channels:\n\n* `&<pattern>`: (Available in Redis 6.2 and later) Add a glob style pattern of Pub/Sub channels that can be accessed by the user. It is possible to specify multiple channel patterns. Note that pattern matching is done only for channels mentioned by `PUBLISH` and `SUBSCRIBE`, whereas `PSUBSCRIBE` requires a literal match between its channel patterns and those allowed for user.\n* `allchannels`: Alias for `&*` that allows the user to access all Pub/Sub channels.\n* `resetchannels`: Flush the list of allowed channel patterns and disconnect the user's Pub/Sub clients if these are no longer able to access their respective channels and/or channel patterns.\n\nConfigure valid passwords for the user:"
+        }
+      ]
+    },
+    {
+      "id": "redis-020",
+      "category": "out_of_scope",
+      "question": "请根据当前知识库说明 PostgreSQL VACUUM 的 autovacuum_vacuum_scale_factor 应该设置为多少。",
+      "excluded_from_recall": true,
+      "reason": "retrieval_only_baseline_does_not_decide_answer_abstention",
+      "latency_ms": 10.165,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.872106,
+          "chunk_id": "89a18bb2a7ed826f99dd",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "```\n# Keysizes\ndb0_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb0_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb0_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\ndb1_distrib_strings_sizes:2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1,128K=1,256K=1,512K=1,1M=1\ndb1_distrib_lists_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_sets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_zsets_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1,64K=1\ndb1_distrib_hashes_items:1=1,2=1,4=1,8=1,16=1,32=1,64=1,128=1,256=1,512=1,1K=1,2K=1,4K=1,8K=1,16K=1,32K=1\n```"
+        },
+        {
+          "rank": 2,
+          "score": 0.846568,
+          "chunk_id": "63ffb2a19f2cb1aa2b3f",
+          "title": "Debugging",
+          "section_path": [
+            "Thank you"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/debugging.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/debugging/",
+          "content": "Your help is extremely important! Many issues can only be tracked this way. So\nthanks!"
+        },
+        {
+          "rank": 3,
+          "score": 0.844585,
+          "chunk_id": "270bc6d35591cae4a21d",
+          "title": "INFO",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/info.md",
+          "source_url": "https://redis.io/docs/latest/commands/info/",
+          "content": "*   `cluster_enabled`: Indicates whether Redis cluster is enabled.\n\nThe **modules** section contains additional information about loaded modules if the modules provide it. The field part of property lines in this section are always prefixed with the module's name.\n\n_Redis Search fields_\n\n*   `search_gc_bytes_collected`: The total amount of memory freed by the garbage collectors from indexes in the shard's memory in bytes. <sup>3</sup>\n*   `search_bytes_collected`: The total amount of memory freed by the garbage collectors from indexes in the shard's memory in bytes. Deprecated in 8.0 (renamed `search_gc_bytes_collected`), but still available in older versions. <sup>1</sup>\n*   `search_gc_marked_deleted_vectors`: The number of vectors marked as deleted in the vector indexes that have not yet been cleaned. <sup>3</sup>\n*   `search_marked_deleted_vectors`: The number of vectors marked as deleted in the vector indexes that have not yet been cleaned. Deprecated in 8.0 (renamed `search_gc_marked_delete_vectors`), but still available in older versions. <sup>1</sup>\n*   `search_gc_total_cycles`: The total number of garbage collection cycles executed. <sup>3</sup>\n*   `search_total_cycles`: The total number of garbage collection cycles executed. Deprecated in 8.0 (renamed `search_gc_total_cycles`), but still available in older versions. <sup>1</sup>\n*   `search_gc_total_docs_not_collected_by_gc`: The number of documents marked as deleted, whose memory has not yet been freed by the garbage collector. <sup>3</sup>\n*   `search_total_docs_not_collected_by_gc`: The number of documents marked as deleted, whose memory has not yet been freed by the garbage collector. Deprecated in 8.0 (renamed `search_gc_total_docs_not_collected`), but still available in older versions. <sup>1</sup>\n*   `search_gc_total_ms_run`: The total duration of all garbage collection cycles in the shard, measured in milliseconds. <sup>3</sup>\n*   `search_total_ms_run`: The total duration of all garbage collection cycles in the shard, measured in milliseconds. Deprecated in 8.0 (renamed `search_gc_total_ms_run`), but still available in older versions. <sup>1</sup>"
+        },
+        {
+          "rank": 4,
+          "score": 0.840904,
+          "chunk_id": "296706c7b2bd3eaf2dd9",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis >= 7.0"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-listpack-entries 512\nhash-max-listpack-value 64\nzset-max-listpack-entries 128\nzset-max-listpack-value 64\nset-max-intset-entries 512\n```"
+        },
+        {
+          "rank": 5,
+          "score": 0.840472,
+          "chunk_id": "a5b4e5efde8af3166e22",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types",
+            "Redis <= 6.2"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/",
+          "content": "```\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nset-max-intset-entries 512\n```"
+        }
+      ]
+    }
+  ]
+}

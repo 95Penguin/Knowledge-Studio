@@ -1,0 +1,54 @@
+# Redis Open Source operations corpus v1.
+# Use exact repository-relative files to keep the first corpus auditable.
+# Blank lines and lines beginning with # are ignored.
+
+# Installation used by the project/demo
+content/operate/oss_and_stack/install/install-stack/docker.md
+content/operate/oss_and_stack/install/install-stack/homebrew.md
+content/operate/oss_and_stack/install/install-stack/install-redis-cli.md
+
+# Core operation and troubleshooting documents
+content/operate/oss_and_stack/management/admin.md
+content/operate/oss_and_stack/management/config.md
+content/operate/oss_and_stack/management/debugging.md
+content/operate/oss_and_stack/management/persistence.md
+content/operate/oss_and_stack/management/replication.md
+content/operate/oss_and_stack/management/scaling.md
+content/operate/oss_and_stack/management/sentinel.md
+content/operate/oss_and_stack/management/troubleshooting.md
+
+# Security
+content/operate/oss_and_stack/management/security/_index.md
+content/operate/oss_and_stack/management/security/acl.md
+content/operate/oss_and_stack/management/security/encryption.md
+
+# Performance and diagnostics
+content/operate/oss_and_stack/management/optimization/latency-monitor.md
+content/operate/oss_and_stack/management/optimization/latency.md
+content/operate/oss_and_stack/management/optimization/memory-optimization.md
+
+# Cluster behavior
+content/operate/oss_and_stack/reference/cluster-spec.md
+
+# Curated diagnostic/configuration commands (not the whole command catalog)
+content/commands/info.md
+content/commands/config-get.md
+content/commands/config-set.md
+content/commands/config-rewrite.md
+content/commands/acl-list.md
+content/commands/acl-getuser.md
+content/commands/acl-log.md
+content/commands/slowlog-get.md
+content/commands/slowlog-len.md
+content/commands/latency-doctor.md
+content/commands/latency-latest.md
+content/commands/memory-doctor.md
+content/commands/memory-stats.md
+content/commands/memory-usage.md
+content/commands/role.md
+content/commands/replicaof.md
+content/commands/failover.md
+content/commands/cluster-info.md
+content/commands/cluster-nodes.md
+content/commands/cluster-slots.md
+content/commands/cluster-shards.md

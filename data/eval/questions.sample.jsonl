@@ -1,0 +1,3 @@
+{"id":"redis-001","question":"Redis 为什么只能从本机访问？","expected_source_ids":["TODO-redis-security"],"expected_answer_points":["bind","protected-mode","firewall"],"should_refuse":false,"expected_tool":"search_knowledge"}
+{"id":"redis-002","question":"根据 Redis 文档告诉我 PostgreSQL 的 VACUUM 参数。","expected_source_ids":[],"expected_answer_points":[],"should_refuse":true,"expected_tool":"search_knowledge"}
+

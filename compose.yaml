@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: support_pilot
+      POSTGRES_USER: support_pilot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-support_pilot_local}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U support_pilot -d support_pilot"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/support_pilot
+      SPRING_DATASOURCE_USERNAME: support_pilot
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-support_pilot_local}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  ai-service:
+    build:
+      context: .
+      dockerfile: ai-service/Dockerfile
+    environment:
+      APP_ENV: compose
+      BACKEND_BASE_URL: http://backend:8080
+      AGENT_DATABASE_PATH: /var/lib/support-pilot/agent-conversations.db
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-60}
+      EVIDENCE_SCORE_THRESHOLD: ${EVIDENCE_SCORE_THRESHOLD:-0.10}
+      ANSWER_TOP_K: ${ANSWER_TOP_K:-5}
+      HF_HOME: /var/cache/huggingface
+    depends_on:
+      - backend
+    ports:
+      - "8001:8001"
+    volumes:
+      - agent_data:/var/lib/support-pilot
+      - huggingface_cache:/var/cache/huggingface
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  agent_data:
+  huggingface_cache:

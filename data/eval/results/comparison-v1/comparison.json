@@ -1,0 +1,62 @@
+{
+  "questions": "/Users/95penguin/project/项目/support-pilot/data/eval/questions.v1.jsonl",
+  "top_k": 5,
+  "retrievers": [
+    {
+      "retriever": "okapi-bm25",
+      "recall_at_1": 0.044444,
+      "recall_at_3": 0.066667,
+      "recall_at_5": 0.066667,
+      "mrr": 0.051852,
+      "hit_count": 3,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 0.035,
+        "p50": 0.029,
+        "p95": 0.068
+      }
+    },
+    {
+      "retriever": "dense-cosine",
+      "recall_at_1": 0.377778,
+      "recall_at_3": 0.555556,
+      "recall_at_5": 0.622222,
+      "mrr": 0.468889,
+      "hit_count": 28,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 39.042,
+        "p50": 21.585,
+        "p95": 26.156
+      }
+    },
+    {
+      "retriever": "rrf-hybrid",
+      "recall_at_1": 0.111111,
+      "recall_at_3": 0.266667,
+      "recall_at_5": 0.422222,
+      "mrr": 0.217037,
+      "hit_count": 19,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 20.566,
+        "p50": 19.963,
+        "p95": 23.847
+      }
+    },
+    {
+      "retriever": "rrf-hybrid-cross-encoder-rerank",
+      "recall_at_1": 0.533333,
+      "recall_at_3": 0.577778,
+      "recall_at_5": 0.6,
+      "mrr": 0.56,
+      "hit_count": 27,
+      "evaluated": 45,
+      "latency_ms": {
+        "average": 435.844,
+        "p50": 477.659,
+        "p95": 646.783
+      }
+    }
+  ]
+}

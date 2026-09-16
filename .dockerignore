@@ -1,0 +1,15 @@
+.git
+.idea
+.vscode
+**/.DS_Store
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+ai-service/.venv
+ai-service/.env
+backend/target
+backend/data
+data/raw
+data/processed
+data/evaluation
+data/indexes/dense/multilingual-e5-small.json

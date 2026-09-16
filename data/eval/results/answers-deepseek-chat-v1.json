@@ -1,0 +1,1107 @@
+{
+  "schema_version": 1,
+  "dataset": "/Users/95penguin/project/项目/support-pilot/data/eval/answer-questions.v1.jsonl",
+  "questions_total": 24,
+  "positive_questions": 16,
+  "negative_questions": 8,
+  "request_success_rate": 1.0,
+  "answerability_accuracy": 1.0,
+  "positive_answer_rate": 1.0,
+  "negative_refusal_accuracy": 1.0,
+  "citation_source_recall": 0.9375,
+  "citation_cases_evaluated": 16,
+  "manual_answer_point_review": {
+    "status": "required",
+    "reason": "语义要点不能用字符串包含关系可靠判断；请依据 details 中的清单人工复核。"
+  },
+  "latency_ms": {
+    "average": 2214.899,
+    "p50": 2215.892,
+    "p95": 3507.141
+  },
+  "accuracy_by_category": {
+    "cluster": 1.0,
+    "corpus_boundary": 1.0,
+    "latency": 1.0,
+    "memory": 1.0,
+    "out_of_scope_database": 1.0,
+    "out_of_scope_general": 1.0,
+    "out_of_scope_middleware": 1.0,
+    "out_of_scope_programming": 1.0,
+    "persistence": 1.0,
+    "replication": 1.0,
+    "security": 1.0,
+    "sentinel": 1.0
+  },
+  "details": [
+    {
+      "id": "answer-redis-001",
+      "category": "latency",
+      "question": "如何开启 Redis 延迟监控，并把需要记录的延迟阈值设置为 100 毫秒？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "要开启 Redis 延迟监控并将阈值设置为 100 毫秒，请在运行时执行以下命令：\n\nCONFIG SET latency-monitor-threshold 100\n\n该命令将延迟监控阈值设置为 100 毫秒，只有耗时大于或等于该阈值的操作才会被记录为延迟尖峰。默认情况下，延迟监控是关闭的（阈值为 0）。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9946486353874207,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "section_path": [
+            "How to enable latency monitoring"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "section_path": [
+            "How to enable latency monitoring"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "cbef247c349b2a45b796",
+          "title": "Redis latency monitoring",
+          "section_path": [
+            "How to enable latency monitoring"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency-monitor/"
+        }
+      ],
+      "required_answer_points": [
+        "使用 CONFIG SET latency-monitor-threshold 100",
+        "阈值单位是毫秒",
+        "默认阈值为 0，表示关闭"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 4500.633
+    },
+    {
+      "id": "answer-redis-002",
+      "category": "latency",
+      "question": "Redis 出现延迟尖峰时，哪个命令可以给出人类可读的诊断和处理建议？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "LATENCY DOCTOR",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9857404828071594,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/latency-doctor.md",
+          "section_path": [
+            "LATENCY DOCTOR"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/latency-doctor.md",
+          "section_path": [
+            "LATENCY DOCTOR"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E2",
+          "chunk_id": "58dba47096b10196cb74",
+          "title": "LATENCY DOCTOR",
+          "section_path": [
+            "LATENCY DOCTOR"
+          ],
+          "source_path": "content/commands/latency-doctor.md",
+          "source_url": "https://redis.io/docs/latest/commands/latency-doctor/"
+        },
+        {
+          "evidence_id": "E3",
+          "chunk_id": "b13a478aeb88d2680ba8",
+          "title": "Redis latency monitoring",
+          "section_path": [
+            "Report information with the LATENCY command"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/latency-monitor.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency-monitor/"
+        }
+      ],
+      "required_answer_points": [
+        "使用 LATENCY DOCTOR",
+        "可以报告延迟问题并给出建议",
+        "可提供尖峰周期、偏差或 fork 等信息"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2024.296
+    },
+    {
+      "id": "answer-redis-003",
+      "category": "latency",
+      "question": "SLOWLOG GET 记录的执行时间是否包含与客户端通信和发送响应的时间？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "不包含。SLOWLOG GET 记录的执行时间不包括与客户端通信和发送响应等 I/O 操作的时间，仅包括实际执行命令所需的时间。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9991205334663391,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/slowlog-get.md",
+          "section_path": [
+            "SLOWLOG GET"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/slowlog-get.md",
+          "section_path": [
+            "SLOWLOG GET"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "e284a1796248a8ac4ff9",
+          "title": "SLOWLOG GET",
+          "section_path": [
+            "SLOWLOG GET"
+          ],
+          "source_path": "content/commands/slowlog-get.md",
+          "source_url": "https://redis.io/docs/latest/commands/slowlog-get/"
+        }
+      ],
+      "required_answer_points": [
+        "不包含客户端 I/O 和发送响应时间",
+        "只统计实际执行命令、阻塞服务其他请求的阶段",
+        "阈值由 slowlog-log-slower-than 控制"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2117.528
+    },
+    {
+      "id": "answer-redis-004",
+      "category": "memory",
+      "question": "如何查看一个 Redis key 及其 value 实际占用了多少内存？复杂数据结构如何提高估算精度？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "要查看一个 Redis key 及其 value 实际占用的内存，可以使用 `MEMORY USAGE` 命令。该命令报告 key 及其 value 在 RAM 中存储所需的字节数，包括数据和管理的开销。对于嵌套数据类型（如哈希、列表、集合、有序集合），可以通过 `SAMPLES` 选项指定采样的嵌套值数量，默认采样 5 个，采样值会取平均值来估算总大小。若要采样所有嵌套值，可使用 `SAMPLES 0`。\n\n对于复杂数据结构，提高估算精度的方法包括：\n- 使用 `SAMPLES` 选项增加采样数量，或设置为 0 以采样所有嵌套值，从而获得更精确的估算。\n- 注意 `MEMORY USAGE` 的估算基于采样，因此采样越多，精度越高，但可能增加开销。\n\n此外，`INFO` 命令的 `keysizes` 部分提供了各数据类型键大小的分布统计，但这是整体分布，不针对单个 key。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.41924408078193665,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/memory-usage.md",
+          "section_path": [
+            "MEMORY USAGE"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/memory-usage.md",
+          "section_path": [
+            "MEMORY USAGE"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E2",
+          "chunk_id": "cfef8851e3169dda9f64",
+          "title": "MEMORY USAGE",
+          "section_path": [
+            "MEMORY USAGE"
+          ],
+          "source_path": "content/commands/memory-usage.md",
+          "source_url": "https://redis.io/docs/latest/commands/memory-usage/"
+        }
+      ],
+      "required_answer_points": [
+        "使用 MEMORY USAGE",
+        "结果包含数据和管理开销的字节数",
+        "嵌套类型可设置 SAMPLES，SAMPLES 0 检查全部元素"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 3507.141
+    },
+    {
+      "id": "answer-redis-005",
+      "category": "memory",
+      "question": "大量小对象分别存成多个 key 时，Redis 官方文档建议如何利用 hash 节省内存？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "Redis 官方文档建议利用 hash 的紧凑编码（special encoding）来节省内存。当 hash 中的元素数量较少且元素大小不超过阈值时，hash 会使用内存高效的编码方式，平均可节省 5 倍内存，最多可节省 10 倍内存。因此，对于大量小对象，可以将它们分别存储为多个 key 改为存储在一个 hash 中，每个对象作为 hash 的一个字段，从而利用这种紧凑编码减少内存占用。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9816161394119263,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "section_path": [
+            "Use hashes when possible"
+          ]
+        }
+      ],
+      "hit_sources": [],
+      "citation_source_recall": 0.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "ffafa3d9f1f09bc9a719",
+          "title": "Memory optimization",
+          "section_path": [
+            "Special encoding of small aggregate data types"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/optimization/memory-optimization.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/"
+        }
+      ],
+      "required_answer_points": [
+        "尽可能使用 hash 表示对象",
+        "把对象的多个属性放进一个 hash",
+        "小 hash 使用紧凑编码，能够节省空间"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2421.572
+    },
+    {
+      "id": "answer-redis-006",
+      "category": "persistence",
+      "question": "appendfsync everysec 在性能和数据安全之间有什么权衡，故障时最多可能损失多少数据？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "appendfsync everysec 在性能和数据安全之间的权衡是：它每秒执行一次 fsync，性能较快（自 2.4 版本起可能与快照一样快），但如果在灾难发生时，最多可能丢失 1 秒的数据。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.5352383255958557,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "7f2a3896479bd61e37cf",
+          "title": "Redis persistence",
+          "section_path": [
+            "Append-only file",
+            "How durable is the append only file?"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+        }
+      ],
+      "required_answer_points": [
+        "每秒执行一次 fsync",
+        "性能和安全性较均衡，也是建议或默认策略",
+        "灾难情况下可能丢失约 1 秒数据"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2213.217
+    },
+    {
+      "id": "answer-redis-007",
+      "category": "persistence",
+      "question": "Redis 的 RDB 和 AOF 分别以什么方式保存数据？是否可以同时使用？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "RDB 以指定时间间隔对数据集进行时间点快照的方式保存数据（E1）。AOF 以记录服务器接收到的每个写操作，并在服务器启动时重放这些操作以重建原始数据集的方式保存数据（E1）。可以同时使用 RDB 和 AOF（E1）。当两者都启用时，Redis 重启时会使用 AOF 文件来重建数据集，因为它保证是最完整的（E4）。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9985297918319702,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Redis persistence"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "section_path": [
+            "Redis persistence"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "b9722e4ac9aabaf91fe8",
+          "title": "Redis persistence",
+          "section_path": [
+            "Redis persistence"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+        },
+        {
+          "evidence_id": "E4",
+          "chunk_id": "0766457f879752e55c4c",
+          "title": "Redis persistence",
+          "section_path": [
+            "Interactions between AOF and RDB persistence"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/persistence.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+        }
+      ],
+      "required_answer_points": [
+        "RDB 是指定时间点的数据集快照",
+        "AOF 记录服务器收到的写操作并可重放",
+        "可以组合使用 RDB 和 AOF"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2105.412
+    },
+    {
+      "id": "answer-redis-008",
+      "category": "replication",
+      "question": "Redis 主从复制是同步还是异步的？主节点在副本同步期间还能处理请求吗？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "Redis 主从复制是异步的，主节点在副本同步期间仍然可以处理请求。根据 E1，Redis 使用异步复制，并且复制在主节点侧是非阻塞的，这意味着当一个或多个副本执行初始同步或部分重新同步时，主节点将继续处理查询。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9445111751556396,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Important facts about Redis replication"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Important facts about Redis replication"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "01c6ce8f481e57fd0e2b",
+          "title": "Redis replication",
+          "section_path": [
+            "Important facts about Redis replication"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/"
+        }
+      ],
+      "required_answer_points": [
+        "Redis 使用异步复制",
+        "主节点可以拥有多个副本",
+        "副本初始或部分同步期间主节点仍可继续处理请求"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2215.892
+    },
+    {
+      "id": "answer-redis-009",
+      "category": "replication",
+      "question": "如何把一个 Redis replica 提升为 master，同时保留已经复制的数据？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "要将 Redis replica 提升为 master 并保留已复制的数据，可以使用 `REPLICAOF NO ONE` 命令。该命令会停止复制，将服务器变为 master，但不会丢弃已复制的数据（E2）。具体步骤：\n\n1. 确保 replica 已与 master 完成初始同步，且数据一致（E1）。\n2. 可选：使用 `CONFIG SET slave-read-only no` 允许 replica 接受写入（E1）。\n3. 在 replica 上执行 `REPLICAOF NO ONE`，使其成为 master（E2）。\n4. 将客户端切换到新的 master（E1）。\n\n注意：如果使用 Redis Sentinel 或 Cluster，应遵循其故障转移流程（E1、E4）。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9984056353569031,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/replicaof.md",
+          "section_path": [
+            "REPLICAOF"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/replicaof.md",
+          "section_path": [
+            "REPLICAOF"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "ef16116606056b0e6dd0",
+          "title": "Redis administration",
+          "section_path": [
+            "Upgrading or restarting a Redis instance without downtime"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/admin.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/admin/"
+        },
+        {
+          "evidence_id": "E2",
+          "chunk_id": "f47688be3bc58b84cb47",
+          "title": "REPLICAOF",
+          "section_path": [
+            "REPLICAOF"
+          ],
+          "source_path": "content/commands/replicaof.md",
+          "source_url": "https://redis.io/docs/latest/commands/replicaof/"
+        }
+      ],
+      "required_answer_points": [
+        "执行 REPLICAOF NO ONE",
+        "会停止复制并将实例转为 master",
+        "不会丢弃已经复制的数据"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 3103.451
+    },
+    {
+      "id": "answer-redis-010",
+      "category": "replication",
+      "question": "为什么关闭持久化的 Redis master 不应该在崩溃后自动重启？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "关闭持久化的 Redis master 在崩溃后不应自动重启，因为如果 master 以空数据集重启，其副本会复制空数据，导致数据丢失。具体故障模式为：master 崩溃后自动重启，由于持久化关闭，重启后数据为空，副本会从空 master 复制数据，从而清空自身数据。因此，当数据安全重要且 master 未启用持久化时，应禁用自动重启。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9981424808502197,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "f57e790e7aa0241a3978",
+          "title": "Redis replication",
+          "section_path": [
+            "Safety of replication when master has persistence turned off"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/replication.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/"
+        },
+        {
+          "evidence_id": "E2",
+          "chunk_id": "d5dd25ea21b85b742318",
+          "title": "Redis administration",
+          "section_path": [
+            "Redis setup tips",
+            "Replication"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/admin.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/admin/"
+        }
+      ],
+      "required_answer_points": [
+        "master 重启后数据集为空",
+        "replica 会从空 master 继续复制",
+        "可能导致所有副本的数据副本被清空"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2964.889
+    },
+    {
+      "id": "answer-redis-011",
+      "category": "sentinel",
+      "question": "Redis Sentinel 的 quorum 与执行 failover 所需的多数派授权有什么区别？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "Redis Sentinel 的 quorum 与执行 failover 所需的多数派授权是两种不同的机制。quorum 是触发故障检测所需的最小 Sentinel 数量，用于将主节点标记为 ODOWN（客观下线），从而触发 failover 流程。而执行 failover 需要获得多数派 Sentinel 的授权，即至少一半以上的 Sentinel 同意该 Sentinel 作为 leader 执行 failover。具体来说，quorum 用于检测故障，而多数派授权用于实际执行 failover。例如，如果有 5 个 Sentinel，quorum 设置为 2，则当 2 个 Sentinel 认为主节点不可达时，主节点被标记为 ODOWN，但执行 failover 的 Sentinel 必须获得至少 3 个 Sentinel 的授权。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9979270696640015,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "f37eecea8633718ce87d",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Algorithms and internals",
+            "Quorum"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"
+        },
+        {
+          "evidence_id": "E2",
+          "chunk_id": "99ed2034a56c907151cb",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel quick start",
+            "Configuring Sentinel"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"
+        },
+        {
+          "evidence_id": "E4",
+          "chunk_id": "7562b9bc047fa5ef69f0",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "Sentinel quick start",
+            "Configuring Sentinel"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"
+        }
+      ],
+      "required_answer_points": [
+        "quorum 是认定 master 为 ODOWN 所需的 Sentinel 数量",
+        "ODOWN 会触发 failover",
+        "实际执行 failover 还需要多数 Sentinel 授权"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2811.213
+    },
+    {
+      "id": "answer-redis-012",
+      "category": "sentinel",
+      "question": "Sentinel 中 SDOWN 和 ODOWN 分别表示什么？ODOWN 是否适用于 replica？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "SDOWN（主观下线）是单个 Sentinel 实例本地判断的实例不可用状态，当 Sentinel 在配置的 is-master-down-after-milliseconds 时间内未收到有效 PING 回复时触发。ODOWN（客观下线）是当足够多的 Sentinel（至少达到 quorum 参数配置的数量）报告 SDOWN 时，通过 SENTINEL is-master-down-by-addr 命令达成共识后达到的状态。ODOWN 仅适用于主节点（master），不适用于副本（replica）或其他 Sentinel；副本只会进入 SDOWN 状态，且处于 SDOWN 状态的副本不会被选为故障转移的候选。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9979565143585205,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "ad2a56afe4720fe89543",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"
+        },
+        {
+          "evidence_id": "E3",
+          "chunk_id": "f3d2d6a69d77cce92b76",
+          "title": "High availability with Redis Sentinel",
+          "section_path": [
+            "More advanced concepts",
+            "SDOWN and ODOWN failure state"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/sentinel.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"
+        }
+      ],
+      "required_answer_points": [
+        "SDOWN 是单个 Sentinel 的主观下线判断",
+        "ODOWN 需要达到 quorum 的 Sentinel 共同判断",
+        "ODOWN 只适用于 master，replica 只有 SDOWN"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2790.094
+    },
+    {
+      "id": "answer-redis-013",
+      "category": "cluster",
+      "question": "Redis Cluster 客户端收到 MOVED 错误后应如何处理，是否应该更新本地槽位映射？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "当 Redis Cluster 客户端收到 MOVED 错误时，应重新向错误中指定的节点发送查询，并应更新本地槽位映射。具体来说，客户端应记住该槽位现在由新节点服务，以便后续请求直接发送到正确节点。更新方式可以是仅更新该槽位的映射，但更推荐的做法是使用 CLUSTER SLOTS 或 CLUSTER SHARDS 命令重新获取完整的槽位映射，因为 MOVED 错误往往意味着多个槽位发生了变更。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9945372939109802,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "b653fefd6bfb02d5f318",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        },
+        {
+          "evidence_id": "E3",
+          "chunk_id": "6447bf137d531b7e3833",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "Client connections and redirection handling"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        },
+        {
+          "evidence_id": "E4",
+          "chunk_id": "769088319a368e9a38f5",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Redirection and resharding",
+            "MOVED Redirection"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        }
+      ],
+      "required_answer_points": [
+        "MOVED 包含 hash slot 和目标节点地址",
+        "客户端应向目标节点重新发送请求",
+        "客户端应记忆或刷新槽位到节点的映射"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2847.941
+    },
+    {
+      "id": "answer-redis-014",
+      "category": "cluster",
+      "question": "Redis Cluster 为什么可能丢失已经向客户端确认的写入？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "Redis Cluster 可能丢失已确认的写入，主要原因有两个：\n\n1. **异步复制**：Redis Cluster 使用异步复制，主节点在向客户端确认写入后，才将写入传播给副本。如果主节点在传播前崩溃，而一个未收到该写入的副本被提升为主节点，该写入将永久丢失（E1）。\n\n2. **网络分区**：当客户端与少数派实例（包括至少一个主节点）隔离时，可能发生写入丢失。例如，在分区期间，客户端可能写入一个主节点，但该主节点随后因无法与多数派通信而被故障转移，导致写入丢失（E1）。\n\n此外，Redis Cluster 的设计目标中明确提到，系统尽力保留来自多数派主节点的写入，但通常存在小窗口期可能丢失已确认的写入，且当客户端处于少数派分区时，丢失窗口更大（E2）。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9995218515396118,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "section_path": [
+            "Redis Cluster 101",
+            "Redis Cluster consistency guarantees"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "section_path": [
+            "Redis Cluster 101",
+            "Redis Cluster consistency guarantees"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "5bab0bf09e88a3bc8145",
+          "title": "Scale with Redis Cluster",
+          "section_path": [
+            "Redis Cluster 101",
+            "Redis Cluster consistency guarantees"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/scaling.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/"
+        },
+        {
+          "evidence_id": "E2",
+          "chunk_id": "bf46c4d30f1eeb2207ae",
+          "title": "Redis cluster specification",
+          "section_path": [
+            "Main properties and rationales of the design",
+            "Redis Cluster goals"
+          ],
+          "source_path": "content/operate/oss_and_stack/reference/cluster-spec.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        }
+      ],
+      "required_answer_points": [
+        "Redis Cluster 不保证强一致性",
+        "复制是异步的，master 不等待 replica 确认就回复客户端",
+        "master 在传播写入前故障并提升未收到写入的 replica 时可能丢失写入"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 3153.588
+    },
+    {
+      "id": "answer-redis-015",
+      "category": "security",
+      "question": "Redis 使用默认配置、未设置密码并监听所有接口时，protected mode 会怎样限制连接？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "当 Redis 使用默认配置（监听所有接口）且未设置密码时，会进入 protected mode。在此模式下，Redis 仅响应来自回环接口（loopback）的查询，对于从其他地址连接的客户端，会返回一个错误，解释问题并提示如何正确配置 Redis。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9975581169128418,
+      "expected_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "section_path": [
+            "Protected mode"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "section_path": [
+            "Protected mode"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "251a0a2c0809c2f22487",
+          "title": "Redis security",
+          "section_path": [
+            "Protected mode"
+          ],
+          "source_path": "content/operate/oss_and_stack/management/security/_index.md",
+          "source_url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/"
+        }
+      ],
+      "required_answer_points": [
+        "Redis 会进入 protected mode",
+        "只响应来自 loopback 接口的查询",
+        "其他地址会收到说明如何正确配置的错误"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2039.141
+    },
+    {
+      "id": "answer-redis-016",
+      "category": "security",
+      "question": "如何查看最近因为认证失败、命令、key 或 Pub/Sub channel 权限而被拒绝的 ACL 事件？",
+      "should_refuse": false,
+      "expected_status": "answered",
+      "actual_status": "answered",
+      "status_correct": true,
+      "answer": "您可以使用 `ACL LOG` 命令查看最近因认证失败、命令、key 或 Pub/Sub channel 权限而被拒绝的 ACL 事件。该命令会列出最近的 ACL 安全事件，包括：\n\n1. 使用 `AUTH` 或 `HELLO` 认证失败（reason = auth）\n2. 违反当前 ACL 规则的命令，包括：\n   - 不允许的命令（reason = command）\n   - 不允许的 key（reason = key）\n   - 不允许的 Pub/Sub channel（reason = channel）\n\n默认显示最近 10 条失败记录，您可以通过可选参数指定显示条数。使用 `ACL LOG RESET` 可以清除日志。日志条目从最新开始显示。\n\n每个日志条目包含以下字段：`count`、`reason`、`context`、`object`、`username`、`age-seconds`、`client-info`、`entry-id`、`timestamp-created`、`timestamp-last-updated`。",
+      "refusal_reason": null,
+      "top_evidence_score": 0.9997405409812927,
+      "expected_sources": [
+        {
+          "source_path": "content/commands/acl-log.md",
+          "section_path": [
+            "ACL LOG"
+          ]
+        }
+      ],
+      "hit_sources": [
+        {
+          "source_path": "content/commands/acl-log.md",
+          "section_path": [
+            "ACL LOG"
+          ]
+        }
+      ],
+      "citation_source_recall": 1.0,
+      "citations": [
+        {
+          "evidence_id": "E1",
+          "chunk_id": "1997092e27f9622e70ab",
+          "title": "ACL LOG",
+          "section_path": [
+            "ACL LOG"
+          ],
+          "source_path": "content/commands/acl-log.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-log/"
+        },
+        {
+          "evidence_id": "E4",
+          "chunk_id": "84c73ca7f2380bf85b99",
+          "title": "ACL LOG",
+          "section_path": [
+            "Details"
+          ],
+          "source_path": "content/commands/acl-log.md",
+          "source_url": "https://redis.io/docs/latest/commands/acl-log/"
+        }
+      ],
+      "required_answer_points": [
+        "使用 ACL LOG",
+        "可查看认证失败以及命令、key、channel 违规",
+        "ACL LOG RESET 可以清空日志"
+      ],
+      "answer_point_review": "pending",
+      "error": null,
+      "latency_ms": 2878.12
+    },
+    {
+      "id": "answer-oos-001",
+      "category": "out_of_scope_database",
+      "question": "PostgreSQL 的 autovacuum_vacuum_scale_factor 应该设置为多少？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 0.003261617152020335,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 808.789
+    },
+    {
+      "id": "answer-oos-002",
+      "category": "out_of_scope_database",
+      "question": "MySQL InnoDB 的 buffer pool 应该配置成物理内存的多少比例？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 0.008159933611750603,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 764.785
+    },
+    {
+      "id": "answer-oos-003",
+      "category": "out_of_scope_middleware",
+      "question": "Kafka ISR 收缩时应该调整哪些 broker 参数？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 0.00010672897769836709,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 880.672
+    },
+    {
+      "id": "answer-oos-004",
+      "category": "out_of_scope_programming",
+      "question": "请用 Java 实现快速排序并分析时间复杂度。",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 0.00203553750179708,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 834.048
+    },
+    {
+      "id": "answer-oos-005",
+      "category": "out_of_scope_general",
+      "question": "明天上海天气怎么样？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 3.7429635995067656e-05,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 796.549
+    },
+    {
+      "id": "answer-boundary-001",
+      "category": "corpus_boundary",
+      "question": "Redis 8 的 vector set 数据类型有哪些正式命令？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "证据中未提供 Redis 8 vector set 数据类型的正式命令列表。",
+      "top_evidence_score": 0.6703682541847229,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 2119.913
+    },
+    {
+      "id": "answer-boundary-002",
+      "category": "corpus_boundary",
+      "question": "Redis Enterprise Active-Active 的冲突解决算法具体如何配置？",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "证据中未包含 Redis Enterprise Active-Active 冲突解决算法的配置方法，仅涉及 Redis Cluster 的 configEpoch 冲突解决。",
+      "top_evidence_score": 0.6351683139801025,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 2419.962
+    },
+    {
+      "id": "answer-boundary-003",
+      "category": "corpus_boundary",
+      "question": "请根据当前知识库给出 Redis Cloud 本月各套餐的实时价格。",
+      "should_refuse": true,
+      "expected_status": "refused",
+      "actual_status": "refused",
+      "status_correct": true,
+      "answer": "当前知识库证据不足，无法可靠回答这个问题。",
+      "refusal_reason": "没有检索到达到相关性阈值的 Redis 官方文档证据。",
+      "top_evidence_score": 0.0018626500386744738,
+      "expected_sources": [],
+      "hit_sources": [],
+      "citation_source_recall": null,
+      "citations": [],
+      "required_answer_points": [],
+      "answer_point_review": "not_applicable",
+      "error": null,
+      "latency_ms": 838.74
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "support-pilot-ai"
+version = "0.1.0"
+description = "RAG and controlled agent service for SupportPilot"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "fastapi>=0.116,<1",
+  "httpx>=0.28,<1",
+  "pydantic-settings>=2.10,<3",
+  "uvicorn[standard]>=0.35,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4,<9",
+  "ruff>=0.12,<1",
+]
+embeddings = [
+  "sentence-transformers>=5,<6",
+]
+
+[project.scripts]
+support-pilot-build-corpus = "app.ingestion.cli:main"
+support-pilot-retrieval = "app.retrieval.cli:main"
+support-pilot-answer = "app.generation.cli:main"
+support-pilot-answer-eval = "app.generation.evaluation_cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
