@@ -120,6 +120,29 @@ class P0BusinessFlowIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void exposesAuthenticatedBusinessToolsThroughMcp() throws Exception {
+        String token = login("demo@supportpilot.dev", "demo1234");
+        mvc.perform(post("/mcp").header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"jsonrpc":"2.0","id":"list-1","method":"tools/list","params":{}}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.tools.length()").value(4))
+                .andExpect(jsonPath("$.result.tools[0].inputSchema.type").value("object"));
+
+        mvc.perform(post("/mcp").header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"jsonrpc":"2.0","id":"call-1","method":"tools/call",
+                                 "params":{"name":"current_user","arguments":{}}}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.isError").value(false))
+                .andExpect(jsonPath("$.result.content[0].type").value("text"));
+    }
+
     private String login(String email, String password) throws Exception {
         String response = mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content(json.writeValueAsString(java.util.Map.of("email", email, "password", password))))

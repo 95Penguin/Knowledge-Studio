@@ -28,6 +28,7 @@ class AgentTurnRequest(BaseModel):
     message: str | None = Field(default=None, max_length=2000)
     backend_token: str | None = Field(default=None, max_length=500)
     device_id: str | None = None
+    knowledge_base_ids: list[str] = Field(default_factory=list, max_length=5)
 
 
 class ToolEvent(BaseModel):

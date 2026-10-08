@@ -43,7 +43,7 @@
 cd ai-service
 uv run --extra dev ruff check app tests
 uv run --extra dev pytest
-node --check ../web/app.js
+npm --prefix ../frontend run build
 ```
 
 浏览器开发者工具的 Network 页面可查看 `/api/agent/stream` 持续接收的 SSE 帧；回答完成后，页面底部会显示 Trace 摘要，刷新并恢复历史对话后仍然存在。

@@ -5,11 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "support-pilot-ai"
 version = "0.1.0"
-description = "RAG and controlled agent service for SupportPilot"
+description = "Multi-knowledge-base RAG, evaluation and agent service"
 requires-python = ">=3.11,<3.14"
 dependencies = [
   "fastapi>=0.116,<1",
   "httpx>=0.28,<1",
+  "python-multipart>=0.0.20,<1",
+  "pypdf>=5,<7",
   "pydantic-settings>=2.10,<3",
   "uvicorn[standard]>=0.35,<1",
 ]
@@ -21,6 +23,17 @@ dev = [
 ]
 embeddings = [
   "sentence-transformers>=5,<6",
+  "torch>=2.7,<3",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform == 'linux'" },
 ]
 
 [project.scripts]
@@ -28,6 +41,7 @@ support-pilot-build-corpus = "app.ingestion.cli:main"
 support-pilot-retrieval = "app.retrieval.cli:main"
 support-pilot-answer = "app.generation.cli:main"
 support-pilot-answer-eval = "app.generation.evaluation_cli:main"
+support-pilot-sync-external = "app.retrieval.external_sync:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]

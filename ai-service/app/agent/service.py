@@ -17,6 +17,7 @@ from app.agent.models import (
 )
 from app.agent.store import ConversationStore
 from app.generation.service import GroundedAnswerService
+from app.knowledge_bases import KnowledgeBaseStore
 
 
 class ControlledAgentService:
@@ -26,11 +27,13 @@ class ControlledAgentService:
         backend: JavaBackendClient,
         max_steps: int = 12,
         store: ConversationStore | None = None,
+        knowledge_bases: KnowledgeBaseStore | None = None,
     ) -> None:
         self.answers = answers
         self.backend = backend
         self.max_steps = max_steps
         self.store = store
+        self.knowledge_bases = knowledge_bases
         self.conversations: dict[str, Conversation] = {}
 
     def turn(self, request: AgentTurnRequest) -> AgentTurnResponse:
@@ -145,7 +148,7 @@ class ControlledAgentService:
         )
 
     def _ask(self, conversation: Conversation, request: AgentTurnRequest) -> AgentTurnResponse:
-        self._require_state(conversation, AgentState.NEW)
+        self._require_state(conversation, AgentState.NEW, AgentState.WAITING_FEEDBACK)
         if not request.backend_token:
             raise ValueError("使用受控 Agent 前必须登录")
         question = (request.message or "").strip()
@@ -153,7 +156,21 @@ class ControlledAgentService:
             raise ValueError("ask action 必须提供 message")
         started = time.perf_counter()
         try:
-            result = self.answers.answer(question)
+            history = [turn.user_message for turn in conversation.history if turn.user_message]
+            if request.knowledge_base_ids:
+                if not self.knowledge_bases:
+                    raise ValueError("knowledge base store unavailable")
+                owner_id = str(self.backend.current_user(request.backend_token)["userId"])
+                self.knowledge_bases.assert_owned(request.knowledge_base_ids, owner_id)
+            if history or request.knowledge_base_ids:
+                result = self.answers.answer(
+                    question, history=history[-3:],
+                    knowledge_base_ids=request.knowledge_base_ids,
+                )
+            else:
+                result = self.answers.answer(question)
+        except (ValueError, PermissionError):
+            raise
         except Exception:  # noqa: BLE001 - provider/runtime failures must enter the safe fallback
             conversation.original_question = question
             return self._transfer(

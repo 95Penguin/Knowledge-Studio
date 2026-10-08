@@ -124,3 +124,25 @@ def test_answer_http_endpoint_uses_grounded_service() -> None:
     assert response.status_code == 200
     assert response.json()["status"] == "answered"
     assert response.json()["citations"][0]["chunk_id"] == "chunk-1"
+
+
+def test_knowledge_stream_emits_typed_answer_citation_followup_and_complete_events() -> None:
+    llm = FixedLLM({
+        "answer": "使用混合检索。[E1]", "citation_ids": ["E1"],
+        "suggested_questions": ["RRF 如何融合？"], "should_refuse": False,
+    })
+    app.dependency_overrides[get_answer_service] = lambda: GroundedAnswerService(
+        FixedRetriever([_result()]), llm
+    )
+    try:
+        response = TestClient(app).post(
+            "/api/knowledge/stream", json={"question": "如何检索？"}
+        )
+    finally:
+        app.dependency_overrides.clear()
+    events = [frame.splitlines()[0] for frame in response.text.split("\n\n") if frame]
+    assert response.status_code == 200
+    assert "event: answer_delta" in events
+    assert "event: citation" in events
+    assert "event: follow_up" in events
+    assert events[-1] == "event: complete"

@@ -77,9 +77,19 @@ class RerankingRetriever:
         }
 
     def search(self, query: str, top_k: int = 5) -> list[SearchResult]:
+        return self.search_scoped(query, top_k, ())
+
+    def search_scoped(
+        self, query: str, top_k: int, knowledge_base_ids: tuple[str, ...]
+    ) -> list[SearchResult]:
         if top_k < 1:
             raise ValueError("top_k must be positive")
-        candidates = self.candidate_retriever.search(query, top_k=self.rerank_k)
+        if hasattr(self.candidate_retriever, "search_scoped"):
+            candidates = self.candidate_retriever.search_scoped(
+                query, self.rerank_k, knowledge_base_ids
+            )
+        else:
+            candidates = self.candidate_retriever.search(query, top_k=self.rerank_k)
         if not candidates:
             return []
         with trace_stage("reranker"):

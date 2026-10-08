@@ -29,19 +29,24 @@ services:
     restart: unless-stopped
 
   ai-service:
+    image: knowledge-studio-ai-service:latest
     build:
       context: .
       dockerfile: ai-service/Dockerfile
     environment:
       APP_ENV: compose
+      PROJECT_ROOT: /app
       BACKEND_BASE_URL: http://backend:8080
       AGENT_DATABASE_PATH: /var/lib/support-pilot/agent-conversations.db
+      KNOWLEDGE_BASE_PATH: /var/lib/support-pilot/knowledge-bases
+      BACKEND_TOOL_TRANSPORT: mcp
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.deepseek.com}
       LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
       LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-60}
       EVIDENCE_SCORE_THRESHOLD: ${EVIDENCE_SCORE_THRESHOLD:-0.10}
       ANSWER_TOP_K: ${ANSWER_TOP_K:-5}
+      RETRIEVAL_MODE: ${RETRIEVAL_MODE:-local}
       HF_HOME: /var/cache/huggingface
     depends_on:
       - backend

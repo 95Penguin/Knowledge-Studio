@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "SupportPilot AI Service"
+    app_name: str = "Knowledge Studio AI Service"
     app_env: str = "local"
     api_prefix: str = "/api"
     llm_api_key: str = ""
@@ -16,9 +16,18 @@ class Settings(BaseSettings):
     answer_top_k: int = 5
     backend_base_url: str = "http://127.0.0.1:8080"
     backend_timeout_seconds: float = 5.0
+    backend_tool_transport: str = "mcp"
     agent_max_steps: int = 12
     project_root: Path = Path(__file__).resolve().parents[2]
     agent_database_path: Path = project_root / "ai-service" / "data" / "agent-conversations.db"
+    knowledge_base_path: Path = project_root / "ai-service" / "data" / "knowledge-bases"
+    retrieval_mode: str = "local"
+    elasticsearch_url: str = ""
+    elasticsearch_index: str = "supportpilot_chunks"
+    elasticsearch_api_key: str = ""
+    milvus_url: str = ""
+    milvus_collection: str = "supportpilot_chunks"
+    milvus_token: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",

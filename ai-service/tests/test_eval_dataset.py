@@ -1,13 +1,18 @@
 import json
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_v1_eval_questions_are_unique_and_grounded() -> None:
+    chunks_path = PROJECT_ROOT / "data/processed/chunks.jsonl"
+    if not chunks_path.exists():
+        pytest.skip("generated corpus is not present; run the corpus build first")
     chunks = [
         json.loads(line)
-        for line in (PROJECT_ROOT / "data/processed/chunks.jsonl").read_text(encoding="utf-8").splitlines()
+        for line in chunks_path.read_text(encoding="utf-8").splitlines()
     ]
     questions = [
         json.loads(line)

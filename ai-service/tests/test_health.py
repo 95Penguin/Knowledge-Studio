@@ -14,5 +14,5 @@ def test_health() -> None:
 def test_web_app_is_served() -> None:
     response = TestClient(app).get("/")
     assert response.status_code == 200
-    assert "SupportPilot" in response.text
-    assert "/app.js" in response.text
+    assert "Knowledge Studio" in response.text
+    assert "/assets/index-" in response.text

@@ -8,6 +8,61 @@ class Retriever(Protocol):
     def search(self, query: str, top_k: int = 5) -> list[SearchResult]: ...
 
 
+class MultiRouteRRFRetriever:
+    """Fuse any number of retrieval routes by stable chunk ID."""
+
+    def __init__(
+        self,
+        routes: dict[str, tuple[Retriever, float]],
+        candidate_k: int = 20,
+        rrf_k: int = 60,
+    ) -> None:
+        if not routes or candidate_k < 1 or rrf_k < 1:
+            raise ValueError("routes, candidate_k and rrf_k must be positive")
+        if any(weight <= 0 for _, weight in routes.values()):
+            raise ValueError("RRF weights must be positive")
+        self.routes = routes
+        self.candidate_k = candidate_k
+        self.rrf_k = rrf_k
+        self.retriever_name = "multi-route-rrf"
+
+    @property
+    def retriever_parameters(self) -> dict[str, Any]:
+        return {
+            "routes": {name: weight for name, (_, weight) in self.routes.items()},
+            "candidate_k_per_retriever": self.candidate_k,
+            "rrf_k": self.rrf_k,
+        }
+
+    def search(self, query: str, top_k: int = 5) -> list[SearchResult]:
+        if top_k < 1:
+            raise ValueError("top_k must be positive")
+        lists = {
+            name: (retriever.search(query, top_k=self.candidate_k), weight)
+            for name, (retriever, weight) in self.routes.items()
+        }
+        with trace_stage("rrf_fusion"):
+            fused: dict[str, dict[str, Any]] = {}
+            for name, (results, weight) in lists.items():
+                for rank, result in enumerate(results, start=1):
+                    item = fused.setdefault(
+                        result.chunk_id,
+                        {"result": result, "rrf_score": 0.0, "components": {}},
+                    )
+                    contribution = weight / (self.rrf_k + rank)
+                    item["rrf_score"] += contribution
+                    item["components"][name] = {
+                        "rank": rank,
+                        "score": round(result.score, 6),
+                        "weight": weight,
+                        "rrf_contribution": round(contribution, 8),
+                    }
+            ranked = sorted(
+                fused.values(), key=lambda item: (-item["rrf_score"], item["result"].chunk_id)
+            )[:top_k]
+            return [RRFHybridRetriever._to_result(item, rank) for rank, item in enumerate(ranked, 1)]
+
+
 class RRFHybridRetriever:
     """Weighted reciprocal rank fusion over lexical and dense candidate lists."""
 

@@ -1,6 +1,5 @@
-"""Retrieval baselines for the SupportPilot knowledge base."""
+"""Retrieval components for Knowledge Studio.
 
-from app.retrieval.bm25 import BM25Index
-from app.retrieval.models import SearchResult
-
-__all__ = ["BM25Index", "SearchResult"]
+Concrete classes are imported from their defining modules to keep package
+initialization free of side effects and circular imports.
+"""

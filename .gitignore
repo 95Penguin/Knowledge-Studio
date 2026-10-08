@@ -11,6 +11,10 @@ __pycache__/
 .ruff_cache/
 .venv/
 
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
 # Java
 backend/target/
 backend/data/
