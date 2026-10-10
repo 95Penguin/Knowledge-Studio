@@ -10,7 +10,7 @@ from app.retrieval.dense import DenseIndex, SentenceTransformerE5Encoder
 from app.retrieval.external import ElasticsearchKeywordIndex, MilvusDenseIndex
 from app.retrieval.graph import HeadingGraphIndex
 from app.retrieval.hybrid import MultiRouteRRFRetriever
-from app.retrieval.planning import PlannedRetriever
+from app.retrieval.planning import ModelQueryPlanner, PlannedRetriever
 from app.retrieval.reranker import BGERerankerScorer, RerankingRetriever
 
 
@@ -22,7 +22,9 @@ def get_embedding_encoder() -> SentenceTransformerE5Encoder:
 @lru_cache
 def get_knowledge_base_store() -> KnowledgeBaseStore:
     settings = get_settings()
-    return KnowledgeBaseStore(settings.knowledge_base_path, get_embedding_encoder())
+    return KnowledgeBaseStore(
+        settings.knowledge_base_path, get_embedding_encoder(), settings.knowledge_max_revisions
+    )
 
 
 @lru_cache
@@ -48,22 +50,35 @@ def get_answer_service() -> GroundedAnswerService:
     graph = HeadingGraphIndex(bm25.documents)
     if settings.retrieval_mode == "external":
         lexical = ElasticsearchKeywordIndex(
-            settings.elasticsearch_url, settings.elasticsearch_index,
+            settings.elasticsearch_url,
+            settings.elasticsearch_index,
             settings.elasticsearch_api_key,
         )
         vector = MilvusDenseIndex(
-            settings.milvus_url, settings.milvus_collection, settings.milvus_token,
-            encoder, bm25.documents,
+            settings.milvus_url,
+            settings.milvus_collection,
+            settings.milvus_token,
+            encoder,
+            bm25.documents,
         )
     elif settings.retrieval_mode == "local":
         lexical, vector = bm25, dense
     else:
         raise ValueError("retrieval_mode must be local or external")
-    hybrid = MultiRouteRRFRetriever({
-        "keyword": (lexical, 1.0), "dense": (vector, 1.0), "graph": (graph, 0.5),
-    }, candidate_k=20, rrf_k=60)
+    hybrid = MultiRouteRRFRetriever(
+        {
+            "keyword": (lexical, 1.0),
+            "dense": (vector, 1.0),
+            "graph": (graph, 0.5),
+        },
+        candidate_k=20,
+        rrf_k=60,
+    )
     corpora = KnowledgeCorpusRetriever(hybrid, get_knowledge_base_store())
-    retriever = PlannedRetriever(RerankingRetriever(corpora, BGERerankerScorer(), rerank_k=10))
+    retriever = PlannedRetriever(
+        RerankingRetriever(corpora, BGERerankerScorer(), rerank_k=10),
+        planner=ModelQueryPlanner(llm),
+    )
     return GroundedAnswerService(
         retriever,
         llm,

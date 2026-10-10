@@ -53,5 +53,7 @@ def trace_stage(name: str) -> Iterator[None]:
 def record_usage(prompt_tokens: int | None, completion_tokens: int | None) -> None:
     trace = _current_trace.get()
     if trace is not None:
-        trace.prompt_tokens = prompt_tokens
-        trace.completion_tokens = completion_tokens
+        if prompt_tokens is not None:
+            trace.prompt_tokens = (trace.prompt_tokens or 0) + prompt_tokens
+        if completion_tokens is not None:
+            trace.completion_tokens = (trace.completion_tokens or 0) + completion_tokens

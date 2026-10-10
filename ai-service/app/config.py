@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = 60.0
     evidence_score_threshold: float = 0.10
     answer_top_k: int = 5
+    knowledge_agent_max_steps: int = 3
+    knowledge_agent_deadline_seconds: float = 90.0
+    knowledge_max_revisions: int = 3
     backend_base_url: str = "http://127.0.0.1:8080"
     backend_timeout_seconds: float = 5.0
     backend_tool_transport: str = "mcp"

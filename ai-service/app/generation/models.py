@@ -28,6 +28,13 @@ class Citation(BaseModel):
     source_type: str = "official"
 
 
+class KnowledgeToolEvent(BaseModel):
+    tool: str
+    status: Literal["succeeded", "failed"]
+    evidence_count: int = 0
+    duration_ms: float = 0
+
+
 class RequestTrace(BaseModel):
     request_id: str
     total_ms: float
@@ -43,4 +50,5 @@ class AnswerResponse(BaseModel):
     top_evidence_score: float | None = None
     refusal_reason: str | None = None
     suggested_questions: list[str] = Field(default_factory=list)
+    tool_events: list[KnowledgeToolEvent] = Field(default_factory=list)
     trace: RequestTrace | None = None

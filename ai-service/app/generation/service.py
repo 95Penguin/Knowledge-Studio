@@ -30,7 +30,9 @@ class GroundedAnswerService:
         self.evidence_score_threshold = evidence_score_threshold
 
     def answer(
-        self, question: str, history: list[str] | None = None,
+        self,
+        question: str,
+        history: list[str] | None = None,
         knowledge_base_ids: list[str] | None = None,
     ) -> AnswerResponse:
         trace = TraceCollector()
@@ -41,7 +43,9 @@ class GroundedAnswerService:
         return response.model_copy(update={"trace": snapshot})
 
     def _answer(
-        self, question: str, history: list[str] | None,
+        self,
+        question: str,
+        history: list[str] | None,
         knowledge_base_ids: list[str] | None,
     ) -> AnswerResponse:
         question = question.strip()
@@ -49,19 +53,25 @@ class GroundedAnswerService:
             raise ValueError("question must not be blank")
         if hasattr(self.retriever, "search_plan"):
             plan = self.retriever.planner.plan(question, history, knowledge_base_ids)
-            evidence = self.retriever.search_plan(plan, top_k=self.top_k)
+            evidence = self.retriever.search_plan(
+                plan, top_k=max(self.top_k, 8) if plan.intent == "overview" else self.top_k
+            )
             retrieval_question = plan.rewritten
         else:
             evidence = self.retriever.search(question, top_k=self.top_k)
             retrieval_question = question
-        top_score = evidence[0].score if evidence else None
+        return self.answer_from_evidence(retrieval_question, evidence)
+
+    def answer_from_evidence(self, question: str, evidence: list[SearchResult]) -> AnswerResponse:
+        """Synthesize program-owned evidence without allowing the model to invent citations."""
+        top_score = max((item.score for item in evidence), default=None)
         if not evidence or top_score is None or top_score < self.evidence_score_threshold:
             return self._refusal(
                 top_score,
                 "没有检索到达到相关性阈值的知识库证据。",
             )
 
-        raw = self.llm.generate(SYSTEM_PROMPT, build_user_prompt(retrieval_question, evidence))
+        raw = self.llm.generate(SYSTEM_PROMPT, build_user_prompt(question, evidence))
         try:
             generated = ModelAnswer.model_validate_json(_extract_json(raw))
         except (ValidationError, json.JSONDecodeError, ValueError) as error:

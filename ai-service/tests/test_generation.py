@@ -6,6 +6,7 @@ from app.generation.runtime import get_answer_service
 from app.generation.service import GroundedAnswerService
 from app.main import app
 from app.retrieval.models import SearchResult
+from app.retrieval.planning import QueryPlan
 
 
 def _result(score: float = 0.99) -> SearchResult:
@@ -92,6 +93,31 @@ def test_model_can_abstain_even_when_retrieval_passes_threshold() -> None:
     response = GroundedAnswerService(FixedRetriever([_result()]), llm).answer("question")
     assert response.status == "refused"
     assert "required default value" in response.refusal_reason
+
+
+def test_overview_uses_broader_evidence_and_best_available_score() -> None:
+    class OverviewRetriever:
+        def __init__(self) -> None:
+            self.planner = self
+            self.requested_top_k = 0
+
+        def plan(self, question: str, history: object, knowledge_base_ids: object) -> QueryPlan:
+            return QueryPlan(question, question, (question,), intent="overview")
+
+        def search_plan(self, plan: QueryPlan, top_k: int) -> list[SearchResult]:
+            self.requested_top_k = top_k
+            return [_result(-0.2), SearchResult(
+                rank=2, score=0.9, chunk_id="decoder", title="Decoder",
+                section_path=["Decoder"], source_path="content/decoder.md",
+                source_url="/decoder", content="Decoder stack uses cross-attention.",
+            )]
+
+    retriever = OverviewRetriever()
+    llm = FixedLLM({"answer": "由多个部分组成。[E1][E2]", "citation_ids": ["E1", "E2"]})
+    response = GroundedAnswerService(retriever, llm).answer("整体结构？")
+    assert retriever.requested_top_k == 8
+    assert response.status == "answered"
+    assert response.top_evidence_score == 0.9
 
 
 def test_malformed_model_output_fails_closed() -> None:

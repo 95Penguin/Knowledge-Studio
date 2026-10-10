@@ -8,10 +8,18 @@
     "build": "vite build"
   },
   "dependencies": {
+    "katex": "^0.18.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "vite": "^7.1.0"
+  },
+  "overrides": {
+    "katex": "$katex"
   }
 }

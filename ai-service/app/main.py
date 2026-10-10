@@ -3,7 +3,7 @@ import json
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -18,13 +18,12 @@ from app.agent.models import (
 from app.agent.runtime import get_agent_service
 from app.agent.service import ControlledAgentService
 from app.config import get_settings
-from app.generation.models import AnswerRequest, AnswerResponse
+from app.generation.models import AnswerRequest, AnswerResponse, KnowledgeToolEvent
 from app.generation.runtime import (
-    get_answer_service,
     get_knowledge_base_store,
     get_knowledge_conversation_store,
 )
-from app.generation.service import GroundedAnswerService
+from app.knowledge_agent import KnowledgeAgentService, get_knowledge_agent_service
 from app.knowledge_bases import KnowledgeBaseStore
 from app.knowledge_history import KnowledgeConversationStore
 
@@ -38,19 +37,34 @@ def health() -> dict[str, str]:
     return {"status": "ok", "service": "ai-service", "environment": settings.app_env}
 
 
+class LoginRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+    password: str = Field(min_length=1, max_length=256)
+
+
+@app.post("/api/auth/login", tags=["auth"])
+def login(request: LoginRequest) -> dict[str, object]:
+    """Same-origin login proxy; the browser never needs a hard-coded Java host."""
+    backend = JavaBackendClient(settings.backend_base_url, settings.backend_timeout_seconds)
+    try:
+        return backend.login(request.email, request.password)
+    except BackendToolError as error:
+        raise HTTPException(status_code=error.status_code, detail=str(error)) from error
+
+
 @app.post("/api/knowledge/answer", response_model=AnswerResponse, tags=["knowledge"])
 def answer_knowledge(
     request: AnswerRequest,
-    service: Annotated[GroundedAnswerService, Depends(get_answer_service)],
+    service: Annotated[KnowledgeAgentService, Depends(get_knowledge_agent_service)],
     authorization: Annotated[str | None, Header()] = None,
 ) -> AnswerResponse:
-    _authorize_knowledge_request(request, authorization)
-    return service.answer(request.question, request.history, request.knowledge_base_ids)
+    owner_id = _authorize_knowledge_request(request, authorization)
+    return service.answer(request.question, request.history, request.knowledge_base_ids, owner_id)
 
 
-def _authorize_knowledge_request(request: AnswerRequest, authorization: str | None) -> None:
+def _authorize_knowledge_request(request: AnswerRequest, authorization: str | None) -> str | None:
     if not request.knowledge_base_ids:
-        return
+        return None
     owner_id = _current_user_id(authorization)
     try:
         get_knowledge_base_store().assert_owned(request.knowledge_base_ids, owner_id)
@@ -58,40 +72,77 @@ def _authorize_knowledge_request(request: AnswerRequest, authorization: str | No
         raise HTTPException(status_code=404, detail=str(error)) from error
     except PermissionError as error:
         raise HTTPException(status_code=403, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    return owner_id
 
 
 @app.post("/api/knowledge/stream", tags=["knowledge"])
 async def stream_knowledge_answer(
     request: AnswerRequest,
-    service: Annotated[GroundedAnswerService, Depends(get_answer_service)],
+    service: Annotated[KnowledgeAgentService, Depends(get_knowledge_agent_service)],
     authorization: Annotated[str | None, Header()] = None,
 ) -> StreamingResponse:
     """Stream typed RAG events after grounding and citation validation."""
-    _authorize_knowledge_request(request, authorization)
+    owner_id = _authorize_knowledge_request(request, authorization)
     conversation_store = None
     conversation_owner = None
+    history = request.history
     if request.conversation_id:
         conversation_store = get_knowledge_conversation_store()
-        conversation_owner = _current_user_id(authorization)
+        conversation_owner = owner_id or _current_user_id(authorization)
         try:
-            conversation_store.assert_owned(request.conversation_id, conversation_owner)
+            conversation = conversation_store.recent(request.conversation_id, conversation_owner)
         except FileNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
         except PermissionError as error:
             raise HTTPException(status_code=403, detail=str(error)) from error
+        if conversation["knowledge_base_ids"] != request.knowledge_base_ids:
+            raise HTTPException(status_code=409, detail="conversation knowledge base cannot change")
+        history = [
+            line
+            for turn in conversation["turns"]
+            for line in (
+                f"User: {turn['question']}",
+                f"Assistant: {turn['answer']['answer'][:400]}",
+            )
+        ]
 
     async def events() -> AsyncIterator[str]:
         yield _sse("status", {"phase": "planning", "message": "正在改写问题并选择检索范围"})
+        queue: asyncio.Queue[KnowledgeToolEvent | None] = asyncio.Queue()
+        loop = asyncio.get_running_loop()
+
+        def on_tool_event(event: KnowledgeToolEvent) -> None:
+            loop.call_soon_threadsafe(queue.put_nowait, event)
+
+        async def run_answer() -> AnswerResponse:
+            try:
+                return await asyncio.to_thread(
+                    service.answer,
+                    request.question,
+                    history,
+                    request.knowledge_base_ids,
+                    owner_id,
+                    on_tool_event,
+                )
+            finally:
+                await queue.put(None)
+
+        task = asyncio.create_task(run_answer())
         try:
-            response = await asyncio.to_thread(
-                service.answer, request.question, request.history, request.knowledge_base_ids
-            )
+            while (tool_event := await queue.get()) is not None:
+                yield _sse("tool", tool_event.model_dump(mode="json"))
+            response = await task
         except ValueError as error:
             yield _sse("error", {"message": str(error)})
             return
         except Exception:  # noqa: BLE001 - close the event stream with a stable error shape
             yield _sse("error", {"message": "知识库回答服务暂时不可用"})
             return
+        finally:
+            if not task.done():
+                task.cancel()
         if request.conversation_id and conversation_owner and conversation_store:
             conversation_store.append(
                 request.conversation_id,
@@ -113,7 +164,8 @@ async def stream_knowledge_answer(
         yield _sse("complete", response.model_dump(mode="json"))
 
     return StreamingResponse(
-        events(), media_type="text/event-stream",
+        events(),
+        media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
@@ -140,9 +192,7 @@ class CreateKnowledgeConversationRequest(BaseModel):
 @app.get("/api/knowledge/conversations", tags=["knowledge"])
 def list_knowledge_conversations(
     authorization: Annotated[str | None, Header()] = None,
-    store: Annotated[
-        KnowledgeConversationStore, Depends(get_knowledge_conversation_store)
-    ] = None,
+    store: Annotated[KnowledgeConversationStore, Depends(get_knowledge_conversation_store)] = None,
 ) -> list[dict[str, object]]:
     return store.list(_current_user_id(authorization))
 
@@ -151,9 +201,7 @@ def list_knowledge_conversations(
 def create_knowledge_conversation(
     request: CreateKnowledgeConversationRequest,
     authorization: Annotated[str | None, Header()] = None,
-    store: Annotated[
-        KnowledgeConversationStore, Depends(get_knowledge_conversation_store)
-    ] = None,
+    store: Annotated[KnowledgeConversationStore, Depends(get_knowledge_conversation_store)] = None,
 ) -> dict[str, object]:
     owner_id = _current_user_id(authorization)
     if request.knowledge_base_ids:
@@ -163,6 +211,8 @@ def create_knowledge_conversation(
             raise HTTPException(status_code=404, detail=str(error)) from error
         except PermissionError as error:
             raise HTTPException(status_code=403, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
     return store.create(owner_id, request.knowledge_base_ids)
 
 
@@ -170,9 +220,7 @@ def create_knowledge_conversation(
 def get_knowledge_conversation(
     conversation_id: str,
     authorization: Annotated[str | None, Header()] = None,
-    store: Annotated[
-        KnowledgeConversationStore, Depends(get_knowledge_conversation_store)
-    ] = None,
+    store: Annotated[KnowledgeConversationStore, Depends(get_knowledge_conversation_store)] = None,
 ) -> dict[str, object]:
     try:
         return store.get(conversation_id, _current_user_id(authorization))
@@ -233,19 +281,65 @@ def list_knowledge_documents(
         raise HTTPException(status_code=404, detail=str(error)) from error
     except PermissionError as error:
         raise HTTPException(status_code=403, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
 
 
 @app.post("/api/knowledge-bases/{kb_id}/documents", tags=["knowledge"])
 async def upload_knowledge_document(
     kb_id: str,
     file: Annotated[UploadFile, File()],
+    source_url: Annotated[str | None, Form()] = None,
     authorization: Annotated[str | None, Header()] = None,
     store: Annotated[KnowledgeBaseStore, Depends(get_knowledge_base_store)] = None,
 ) -> dict[str, object]:
     owner_id = _current_user_id(authorization)
     try:
         content = await file.read(10 * 1024 * 1024 + 1)
-        return await asyncio.to_thread(store.upload, kb_id, file.filename or "", content, owner_id)
+        return await asyncio.to_thread(
+            store.upload, kb_id, file.filename or "", content, owner_id, source_url
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except PermissionError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+
+@app.put("/api/knowledge-bases/{kb_id}/documents/{document_id}", tags=["knowledge"])
+async def replace_knowledge_document(
+    kb_id: str,
+    document_id: str,
+    file: Annotated[UploadFile, File()],
+    source_url: Annotated[str | None, Form()] = None,
+    authorization: Annotated[str | None, Header()] = None,
+    store: Annotated[KnowledgeBaseStore, Depends(get_knowledge_base_store)] = None,
+) -> dict[str, object]:
+    owner_id = _current_user_id(authorization)
+    try:
+        content = await file.read(10 * 1024 * 1024 + 1)
+        return await asyncio.to_thread(
+            store.replace, kb_id, document_id, file.filename or "", content, owner_id, source_url
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except PermissionError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+
+@app.delete("/api/knowledge-bases/{kb_id}/documents/{document_id}", tags=["knowledge"])
+async def delete_knowledge_document(
+    kb_id: str,
+    document_id: str,
+    authorization: Annotated[str | None, Header()] = None,
+    store: Annotated[KnowledgeBaseStore, Depends(get_knowledge_base_store)] = None,
+) -> dict[str, str]:
+    try:
+        await asyncio.to_thread(store.delete, kb_id, document_id, _current_user_id(authorization))
+        return {"status": "deleted"}
     except FileNotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
     except PermissionError as error:
@@ -262,7 +356,9 @@ def knowledge_document_content(
     store: Annotated[KnowledgeBaseStore, Depends(get_knowledge_base_store)] = None,
 ) -> PlainTextResponse:
     try:
-        return PlainTextResponse(store.document_text(kb_id, document_id, _current_user_id(authorization)))
+        return PlainTextResponse(
+            store.document_text(kb_id, document_id, _current_user_id(authorization))
+        )
     except FileNotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
     except PermissionError as error:

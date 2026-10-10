@@ -116,6 +116,34 @@ class KnowledgeConversationStore:
     def assert_owned(self, conversation_id: str, owner_id: str) -> None:
         self.get(conversation_id, owner_id)
 
+    def recent(self, conversation_id: str, owner_id: str, limit: int = 3) -> dict[str, Any]:
+        """Load only the turns needed for prompt context, not the entire conversation."""
+        if not 1 <= limit <= 20:
+            raise ValueError("recent turn limit must be between 1 and 20")
+        with self._lock, self._connect() as connection:
+            conversation = connection.execute(
+                "SELECT owner_id, knowledge_base_ids_json FROM knowledge_conversation WHERE id = ?",
+                (conversation_id,),
+            ).fetchone()
+            if conversation is None:
+                raise FileNotFoundError("conversation not found")
+            if conversation["owner_id"] != owner_id:
+                raise PermissionError("conversation does not belong to current user")
+            turns = connection.execute(
+                """
+                SELECT question, answer_json FROM knowledge_turn
+                WHERE conversation_id = ? ORDER BY position DESC LIMIT ?
+                """,
+                (conversation_id, limit),
+            ).fetchall()
+        return {
+            "knowledge_base_ids": json.loads(conversation["knowledge_base_ids_json"]),
+            "turns": [
+                {"question": turn["question"], "answer": json.loads(turn["answer_json"])}
+                for turn in reversed(turns)
+            ],
+        }
+
     def append(
         self,
         conversation_id: str,
@@ -126,13 +154,15 @@ class KnowledgeConversationStore:
     ) -> None:
         with self._lock, self._connect() as connection:
             conversation = connection.execute(
-                "SELECT owner_id, title FROM knowledge_conversation WHERE id = ?",
+                "SELECT owner_id, title, knowledge_base_ids_json FROM knowledge_conversation WHERE id = ?",
                 (conversation_id,),
             ).fetchone()
             if conversation is None:
                 raise FileNotFoundError("conversation not found")
             if conversation["owner_id"] != owner_id:
                 raise PermissionError("conversation does not belong to current user")
+            if json.loads(conversation["knowledge_base_ids_json"]) != knowledge_base_ids:
+                raise ValueError("conversation knowledge base cannot change")
             position = connection.execute(
                 "SELECT COUNT(*) FROM knowledge_turn WHERE conversation_id = ?",
                 (conversation_id,),
@@ -153,10 +183,10 @@ class KnowledgeConversationStore:
             connection.execute(
                 """
                 UPDATE knowledge_conversation
-                SET title = ?, knowledge_base_ids_json = ?, updated_at = CURRENT_TIMESTAMP
+                SET title = ?, updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
                 """,
-                (title or "新对话", json.dumps(knowledge_base_ids), conversation_id),
+                (title or "新对话", conversation_id),
             )
 
     @staticmethod

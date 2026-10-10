@@ -21,9 +21,16 @@ class JavaBackendClient:
     def current_user(self, token: str) -> dict[str, Any]:
         return self._request("GET", "/api/auth/me", token, request_id())
 
-    def create_ticket(
-        self, token: str, request_id: str, payload: dict[str, Any]
-    ) -> dict[str, Any]:
+    def login(self, email: str, password: str) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            "/api/auth/login",
+            None,
+            request_id(),
+            {"email": email, "password": password},
+        )
+
+    def create_ticket(self, token: str, request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return self._request("POST", "/api/tickets", token, request_id, payload)
 
     def transfer_to_human(
@@ -35,13 +42,15 @@ class JavaBackendClient:
         self,
         method: str,
         path: str,
-        token: str,
+        token: str | None,
         request_id: str,
         payload: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        if not token:
+        if token is not None and not token:
             raise BackendToolError(401, "执行敏感工具前必须登录。")
-        headers = {"Authorization": f"Bearer {token}", "X-Request-Id": request_id}
+        headers = {"X-Request-Id": request_id}
+        if token is not None:
+            headers["Authorization"] = f"Bearer {token}"
         response = None
         for attempt in range(2):
             try:
@@ -53,7 +62,9 @@ class JavaBackendClient:
             except (httpx.TimeoutException, httpx.TransportError) as error:
                 if attempt == 1:
                     status = 504 if isinstance(error, httpx.TimeoutException) else 503
-                    raise BackendToolError(status, "Java 业务服务调用失败，有限重试已用尽。") from error
+                    raise BackendToolError(
+                        status, "Java 业务服务调用失败，有限重试已用尽。"
+                    ) from error
         if response is None:
             raise BackendToolError(503, "Java 业务服务暂时不可用。")
         if response.is_error:

@@ -1,9 +1,22 @@
 import json
+from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Protocol
 
 import httpx
 
 from app.observability.trace import record_usage, trace_stage
+
+_generation_timeout: ContextVar[float | None] = ContextVar("generation_timeout", default=None)
+
+
+@contextmanager
+def limit_generation_timeout(seconds: float | None):
+    token = _generation_timeout.set(seconds)
+    try:
+        yield
+    finally:
+        _generation_timeout.reset(token)
 
 
 class LLMClient(Protocol):
@@ -28,6 +41,10 @@ class OpenAICompatibleChatClient:
         self.timeout_seconds = timeout_seconds
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
+        limit = _generation_timeout.get()
+        timeout = min(self.timeout_seconds, limit) if limit is not None else self.timeout_seconds
+        if timeout <= 0:
+            raise TimeoutError("model generation time budget exhausted")
         payload = {
             "model": self.model,
             "messages": [
@@ -37,9 +54,7 @@ class OpenAICompatibleChatClient:
             "temperature": 0,
             "response_format": {"type": "json_object"},
         }
-        with trace_stage("llm_generation"), httpx.Client(
-            timeout=self.timeout_seconds
-        ) as client:
+        with trace_stage("llm_generation"), httpx.Client(timeout=timeout) as client:
             response = client.post(
                 f"{self.base_url}/chat/completions",
                 headers={"Authorization": f"Bearer {self.api_key}"},
@@ -52,4 +67,6 @@ class OpenAICompatibleChatClient:
         try:
             return data["choices"][0]["message"]["content"]
         except (KeyError, IndexError, TypeError) as error:
-            raise ValueError(f"Unexpected chat completion response: {json.dumps(data)[:500]}") from error
+            raise ValueError(
+                f"Unexpected chat completion response: {json.dumps(data)[:500]}"
+            ) from error
